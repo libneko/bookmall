@@ -1,4 +1,4 @@
-package com.neko.controller;
+package com.neko.controller.users;
 
 import com.neko.constant.JwtClaimsConstant;
 import com.neko.dto.UserDTO;
@@ -60,5 +60,10 @@ public class UserController {
                 .build();
 
         return Result.success(userLoginVO);
+    }
+
+    @PostMapping("/logout")
+    public Result<String> logout() {
+        return Result.success();
     }
 }

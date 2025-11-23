@@ -4,7 +4,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -13,7 +12,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Map;
 
-@Slf4j
 public class JwtUtil {
     /**
      * 生成jwt
@@ -76,7 +74,7 @@ public class JwtUtil {
             byte[] hash = digest.digest(keyBytes);
             return Keys.hmacShaKeyFor(hash);
         } catch (NoSuchAlgorithmException e) {
-            log.error("", e);
+            e.printStackTrace();
         }
         return null;
     }
