@@ -4,6 +4,8 @@ import com.neko.entity.Book;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 @Mapper
 public interface BookMapper {
 
@@ -12,4 +14,6 @@ public interface BookMapper {
 
     @Select("select * from book where id = #{id}")
     Book getById(Long id);
+
+    List<Book> list(Book dish);
 }
