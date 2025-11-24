@@ -23,4 +23,11 @@ public class Result<T> implements Serializable {
         result.data = object;
         return result;
     }
+
+    public static <T> Result<T> error(String message) {
+        Result<T> result = new Result<>();
+        result.code = 0;
+        result.message = message;
+        return result;
+    }
 }

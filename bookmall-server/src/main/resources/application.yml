@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: bookmall-server
+
+  profiles:
+    active: dev
+  datasource:
+    driver-class-name: ${bookmall.datasource.driver-class-name}
+    url: jdbc:postgresql://${bookmall.datasource.host}:${bookmall.datasource.port}/${bookmall.datasource.database}?currentSchema=public
+    username: ${bookmall.datasource.username}
+    password: ${bookmall.datasource.password}
