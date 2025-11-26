@@ -9,3 +9,7 @@ spring:
     url: jdbc:postgresql://${bookmall.datasource.host}:${bookmall.datasource.port}/${bookmall.datasource.database}?currentSchema=public
     username: ${bookmall.datasource.username}
     password: ${bookmall.datasource.password}
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
