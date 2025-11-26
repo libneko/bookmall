@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 @Slf4j
 public class UserController {
 
@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public Result<String> register(@RequestBody UserDTO userDTO){
+    public Result<String> register(@RequestBody UserDTO userDTO) {
         log.info("User register: {}", userDTO);
         userService.register(userDTO);
         return Result.success();
