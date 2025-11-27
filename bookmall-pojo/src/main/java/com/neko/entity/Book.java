@@ -22,6 +22,8 @@ public class Book implements Serializable {
 
     private String name;
 
+    private String author;
+
     private Long categoryId;
 
     private BigDecimal price;
