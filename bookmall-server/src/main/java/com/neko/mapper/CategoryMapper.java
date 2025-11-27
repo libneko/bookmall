@@ -14,6 +14,7 @@ public interface CategoryMapper {
 
     /**
      * 插入数据
+     *
      * @param category
      */
     @Insert("insert into category(name, sort, status)" +
@@ -23,6 +24,7 @@ public interface CategoryMapper {
 
     /**
      * 分页查询
+     *
      * @param categoryPageQueryDTO
      * @return
      */
@@ -30,6 +32,7 @@ public interface CategoryMapper {
 
     /**
      * 根据id删除分类
+     *
      * @param id
      */
     @Delete("delete from category where id = #{id}")
@@ -37,14 +40,15 @@ public interface CategoryMapper {
 
     /**
      * 根据id修改分类
+     *
      * @param category
      */
     void update(Category category);
 
     /**
-     * 根据类型查询分类
-     * @param type
+     * 查询分类
+     *
      * @return
      */
-    List<Category> list(Integer type);
+    List<Category> list();
 }
