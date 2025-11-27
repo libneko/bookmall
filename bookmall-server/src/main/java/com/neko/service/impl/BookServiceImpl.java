@@ -41,7 +41,10 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookVO getById(Long id) {
-        return null;
+        Book book = bookMapper.getById(id);
+        BookVO bookVO = new BookVO();
+        BeanUtils.copyProperties(book, bookVO);
+        return bookVO;
     }
 
     @Override
