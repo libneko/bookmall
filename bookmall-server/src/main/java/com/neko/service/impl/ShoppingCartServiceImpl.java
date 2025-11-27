@@ -31,7 +31,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         Long userId = BaseContext.getCurrentId();
         shoppingCart.setUserId(userId);
 
-        // TODO
         List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
 
         if (list != null && !list.isEmpty()) {

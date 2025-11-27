@@ -86,13 +86,12 @@ public class OrderServiceImpl implements OrderService {
 
         shoppingCartMapper.deleteByUserId(userId);
 
-        OrderSubmitVO orderSubmitVO = OrderSubmitVO.builder()
+        return OrderSubmitVO.builder()
                 .id(orders.getId())
                 .orderTime(orders.getOrderTime())
                 .orderNumber(orders.getNumber())
                 .orderAmount(orders.getAmount())
                 .build();
-        return orderSubmitVO;
     }
 
     @Override
@@ -144,7 +143,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void userCancelById(Long id) throws Exception {
+    public void userCancelById(Long id) {
         // 根据id查询订单
         Orders ordersDB = orderMapper.getById(id);
 

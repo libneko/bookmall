@@ -52,13 +52,12 @@ public class JwtUtil {
         SecretKey signingKey = getValidSigningKey(secretKey);
 
         // 得到DefaultJwtParser
-        Claims claims = Jwts.parser()
+        return Jwts.parser()
                 // 设置签名的秘钥
                 .verifyWith(signingKey)
                 // 设置需要解析的jwt
                 .build()
                 .parseSignedClaims(token).getPayload();
-        return claims;
     }
 
     /**

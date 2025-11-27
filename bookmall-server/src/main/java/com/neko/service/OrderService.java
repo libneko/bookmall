@@ -32,7 +32,7 @@ public interface OrderService {
      *
      * @param id
      */
-    void userCancelById(Long id) throws Exception;
+    void userCancelById(Long id);
 
     /**
      * 条件搜索订单

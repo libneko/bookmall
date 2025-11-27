@@ -59,7 +59,7 @@ public class UserOrderController {
      * @return
      */
     @PutMapping("/cancel/{id}")
-    public Result<Object> cancel(@PathVariable("id") Long id) throws Exception {
+    public Result<Object> cancel(@PathVariable("id") Long id) {
         orderService.userCancelById(id);
         return Result.success();
     }

@@ -1,5 +1,6 @@
 package com.neko.dto;
 
+import com.neko.entity.BookStock;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -21,4 +22,6 @@ public class BookDTO implements Serializable {
     private String description;
 
     private Integer status;
+
+    private BookStock stock;
 }

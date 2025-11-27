@@ -27,11 +27,11 @@ public class UserBookController {
     }
 
     @GetMapping("/list")
-    public Result<List<BookVO>> list(Long categoryId){
+    public Result<List<BookVO>> list(Long categoryId) {
         String key = "book_" + categoryId;
         List<BookVO> list = (List<BookVO>) redisTemplate.opsForValue().get(key);
 
-        if (list != null & !list.isEmpty()) {
+        if (list != null && !list.isEmpty()) {
             return Result.success(list);
         }
 
