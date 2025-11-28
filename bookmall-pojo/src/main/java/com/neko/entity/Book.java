@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -33,4 +34,8 @@ public class Book implements Serializable {
     private String description;
 
     private Integer status;
+
+    private LocalDateTime createTime;
+
+    private LocalDateTime updateTime;
 }

@@ -1,8 +1,10 @@
 package com.neko.mapper;
 
 import com.github.pagehelper.Page;
+import com.neko.annotation.AutoFill;
 import com.neko.dto.CategoryPageQueryDTO;
 import com.neko.entity.Category;
+import com.neko.enums.OperationType;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -17,9 +19,10 @@ public interface CategoryMapper {
      *
      * @param category
      */
-    @Insert("insert into category(name, sort, status)" +
+    @Insert("insert into category(name, sort, status, create_time, update_time)" +
             " VALUES" +
-            " (#{name}, #{sort}, #{status})")
+            " (#{name}, #{sort}, #{status}, #{createTime}, #{updateTime})")
+    @AutoFill(value = OperationType.INSERT)
     void insert(Category category);
 
     /**
@@ -43,6 +46,7 @@ public interface CategoryMapper {
      *
      * @param category
      */
+    @AutoFill(value = OperationType.UPDATE)
     void update(Category category);
 
     /**

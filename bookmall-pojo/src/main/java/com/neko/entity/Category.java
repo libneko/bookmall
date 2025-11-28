@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -27,4 +28,10 @@ public class Category implements Serializable {
 
     // 分类状态 0标识禁用 1表示启用
     private Integer status;
+
+    // 创建时间
+    private LocalDateTime createTime;
+
+    // 更新时间
+    private LocalDateTime updateTime;
 }

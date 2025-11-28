@@ -4,12 +4,14 @@ import com.neko.dto.ShoppingCartDTO;
 import com.neko.entity.ShoppingCart;
 import com.neko.result.Result;
 import com.neko.service.ShoppingCartService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/user/shoppingCart")
+@Slf4j
 public class ShoppingCartController {
 
     private final ShoppingCartService shoppingCartService;
@@ -20,6 +22,7 @@ public class ShoppingCartController {
 
     @PostMapping("/add")
     public Result<Object> add(@RequestBody ShoppingCartDTO shoppingCartDTO) {
+        log.info("Add shopping cart, item info: {}", shoppingCartDTO);
         shoppingCartService.add(shoppingCartDTO);
         return Result.success();
     }

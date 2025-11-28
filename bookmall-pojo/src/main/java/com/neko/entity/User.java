@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -28,4 +29,8 @@ public class User implements Serializable {
     private String idNumber;
 
     private Integer status;
+
+    private LocalDateTime createTime;
+
+    private LocalDateTime updateTime;
 }
