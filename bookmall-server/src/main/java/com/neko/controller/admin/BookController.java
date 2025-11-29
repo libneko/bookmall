@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -38,7 +39,7 @@ public class BookController {
     }
 
     @GetMapping("/page")
-    public Result<PageResult<BookVO>> page(BookPageQueryDTO bookPageQueryDTO) {
+    public Result<PageResult<BookVO>> page(BookPageQueryDTO bookPageQueryDTO) throws IOException {
         log.info("Paginated query of book(s), {}", bookPageQueryDTO);
         PageResult<BookVO> pageResult = bookService.pageQuery(bookPageQueryDTO);
         return Result.success(pageResult);
