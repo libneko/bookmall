@@ -1,7 +1,5 @@
 package com.neko.service.impl;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.neko.constant.MessageConstant;
 import com.neko.dto.BookDTO;
 import com.neko.dto.BookPageQueryDTO;
@@ -66,15 +64,12 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public PageResult<BookVO> pageQuery(BookPageQueryDTO bookPageQueryDTO) throws IOException {
-//        PageHelper.startPage(bookPageQueryDTO.getPage(), bookPageQueryDTO.getPageSize());
-//        Page<BookVO> page = bookMapper.pageQuery(bookPageQueryDTO);
-//        return new PageResult<>(page.getTotal(), page.getResult());
         int from = (bookPageQueryDTO.getPage() - 1) * bookPageQueryDTO.getPageSize();
 
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 
         if (bookPageQueryDTO.getName() != null) {
-            boolQueryBuilder.must(QueryBuilders.termQuery("after.name", bookPageQueryDTO.getName()));
+            boolQueryBuilder.must(QueryBuilders.matchQuery("after.name", bookPageQueryDTO.getName()));
         }
 
         if (bookPageQueryDTO.getCategoryId() != null) {
