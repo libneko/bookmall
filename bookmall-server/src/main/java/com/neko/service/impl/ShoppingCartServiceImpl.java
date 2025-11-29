@@ -41,7 +41,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             shoppingCartMapper.updateNumberById(cart);
         } else {
             Long bookId = shoppingCartDTO.getBookId();
-            log.info("book id: {}", bookId);
             Book book = bookMapper.getById(bookId);
             shoppingCart.setName(book.getName());
             shoppingCart.setImage(book.getImage());

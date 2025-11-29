@@ -15,23 +15,36 @@ import com.neko.result.PageResult;
 import com.neko.service.BookService;
 import com.neko.vo.BookVO;
 import lombok.extern.slf4j.Slf4j;
+import org.opensearch.action.search.SearchRequest;
+import org.opensearch.action.search.SearchResponse;
+import org.opensearch.client.RequestOptions;
+import org.opensearch.client.RestHighLevelClient;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.sort.SortOrder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 
 @Service
 @Slf4j
 public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
     private final BookStockMapper bookStockMapper;
+    private final RestHighLevelClient restHighLevelClient;
 
-    public BookServiceImpl(BookMapper bookMapper, BookStockMapper bookStockMapper) {
+    public BookServiceImpl(BookMapper bookMapper, BookStockMapper bookStockMapper, RestHighLevelClient restHighLevelClient) {
         this.bookMapper = bookMapper;
         this.bookStockMapper = bookStockMapper;
+        this.restHighLevelClient = restHighLevelClient;
     }
 
     @Override
@@ -52,10 +65,58 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public PageResult<BookVO> pageQuery(BookPageQueryDTO bookPageQueryDTO) {
-        PageHelper.startPage(bookPageQueryDTO.getPage(), bookPageQueryDTO.getPageSize());
-        Page<BookVO> page = bookMapper.pageQuery(bookPageQueryDTO);
-        return new PageResult<>(page.getTotal(), page.getResult());
+    public PageResult<BookVO> pageQuery(BookPageQueryDTO bookPageQueryDTO) throws IOException {
+//        PageHelper.startPage(bookPageQueryDTO.getPage(), bookPageQueryDTO.getPageSize());
+//        Page<BookVO> page = bookMapper.pageQuery(bookPageQueryDTO);
+//        return new PageResult<>(page.getTotal(), page.getResult());
+        int from = (bookPageQueryDTO.getPage() - 1) * bookPageQueryDTO.getPageSize();
+
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+
+        if (bookPageQueryDTO.getName() != null) {
+            boolQueryBuilder.must(QueryBuilders.termQuery("after.name", bookPageQueryDTO.getName()));
+        }
+
+        if (bookPageQueryDTO.getCategoryId() != null) {
+            boolQueryBuilder.must(QueryBuilders.termQuery("after.category_id", bookPageQueryDTO.getCategoryId()));
+        }
+
+        if (bookPageQueryDTO.getStatus() != null) {
+            boolQueryBuilder.filter(QueryBuilders.termQuery("after.status", bookPageQueryDTO.getStatus()));
+        }
+
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+                .query(boolQueryBuilder)
+                .from(from)
+                .size(bookPageQueryDTO.getPageSize())
+                .sort("after.create_time", SortOrder.DESC);
+
+        SearchRequest searchRequest = new SearchRequest("bookmall_postgres.public.book")
+                .source(searchSourceBuilder);
+
+        SearchResponse response = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+
+        List<BookVO> books = Arrays.stream(response.getHits().getHits())
+                .map(hit -> {
+                    Map<String, Object> after = (Map<String, Object>) hit.getSourceAsMap().get("after");
+                    BookVO vo = new BookVO();
+                    vo.setId(((Number) after.get("id")).longValue());
+                    vo.setName((String) after.get("name"));
+                    vo.setAuthor((String) after.get("author"));
+                    vo.setPrice(new BigDecimal(after.get("price").toString()));
+                    vo.setImage((String) after.get("image"));
+                    vo.setCategoryId(((Number) after.get("category_id")).longValue());
+                    vo.setStatus((Integer) after.get("status"));
+                    vo.setUpdateTime(LocalDateTime.ofInstant(
+                            Instant.ofEpochMilli(((Number) after.get("update_time")).longValue()),
+                            ZoneId.systemDefault()
+                    ));
+                    vo.setDescription((String) after.get("description"));
+                    return vo;
+                }).toList();
+
+        long total = response.getHits().getTotalHits().value();
+        return new PageResult<>(total, books);
     }
 
     @Override

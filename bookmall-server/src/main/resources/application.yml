@@ -9,7 +9,15 @@ spring:
     url: jdbc:postgresql://${bookmall.datasource.host}:${bookmall.datasource.port}/${bookmall.datasource.database}?currentSchema=public
     username: ${bookmall.datasource.username}
     password: ${bookmall.datasource.password}
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   configuration:
     map-underscore-to-camel-case: true
+
+opensearch:
+  url: https://localhost:9200
+  username: admin
+  password: Opensearch123@

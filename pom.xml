@@ -132,6 +132,13 @@
                 <artifactId>jackson-databind</artifactId>
                 <version>3.0.2</version>
             </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.opensearch.client/opensearch-rest-high-level-client -->
+            <dependency>
+                <groupId>org.opensearch.client</groupId>
+                <artifactId>opensearch-rest-high-level-client</artifactId>
+                <version>3.3.2</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
