@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -98,7 +99,7 @@ public class BookServiceImpl implements BookService {
                     vo.setId(((Number) after.get("id")).longValue());
                     vo.setName((String) after.get("name"));
                     vo.setAuthor((String) after.get("author"));
-                    vo.setPrice(new BigDecimal(after.get("price").toString()));
+                    vo.setPrice(new BigDecimal(new BigInteger(Base64.getDecoder().decode(after.get("price").toString())), 2));
                     vo.setImage((String) after.get("image"));
                     vo.setCategoryId(((Number) after.get("category_id")).longValue());
                     vo.setStatus((Integer) after.get("status"));
