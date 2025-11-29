@@ -56,7 +56,7 @@ public class BookController {
 
     @GetMapping("/{id}")
     public Result<BookVO> getById(@PathVariable Long id) {
-        log.info("get book by id: {}", id);
+        log.info("admin get book by id: {}", id);
         BookVO bookVO = bookService.getById(id);
         return Result.success(bookVO);
     }

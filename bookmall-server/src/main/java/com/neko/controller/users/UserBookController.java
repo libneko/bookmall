@@ -8,6 +8,7 @@ import com.neko.vo.BookVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +25,13 @@ public class UserBookController {
     public UserBookController(RedisTemplate<String, Object> redisTemplate, BookService bookService) {
         this.redisTemplate = redisTemplate;
         this.bookService = bookService;
+    }
+
+    @GetMapping("/{id}")
+    public Result<BookVO> getById(@PathVariable Long id) {
+        log.info("user get book by id: {}", id);
+        BookVO bookVO = bookService.getById(id);
+        return Result.success(bookVO);
     }
 
     @GetMapping("/list")

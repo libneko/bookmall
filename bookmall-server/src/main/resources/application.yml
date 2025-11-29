@@ -30,4 +30,4 @@ bookmall:
 
     user-secret-key: user
     user-ttl: 7200000
-    user-token-name: authentication
+    user-token-name: token
