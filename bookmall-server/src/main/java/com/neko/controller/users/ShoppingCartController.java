@@ -1,5 +1,6 @@
 package com.neko.controller.users;
 
+import com.neko.context.BaseContext;
 import com.neko.dto.ShoppingCartDTO;
 import com.neko.entity.ShoppingCart;
 import com.neko.result.Result;
@@ -35,19 +36,29 @@ public class ShoppingCartController {
 
     @DeleteMapping("/clean")
     public Result<Object> clean() {
+        log.info("Clean shopping cart");
         shoppingCartService.clean();
         return Result.success();
     }
 
     @DeleteMapping("/{id}")
-    public Result<Object> deleteById(@PathVariable Integer id) {
-        shoppingCartService.deleteById(id);
+    public Result<Object> deleteById(@PathVariable Long id) {
+        log.info("Delete shopping cart, id: {}", id);
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setBookId(id);
+        Long userId = BaseContext.getCurrentId();
+        shoppingCart.setUserId(userId);
+
+        shoppingCartService.delete(shoppingCart);
         return Result.success();
     }
 
     @PutMapping("/update")
     public Result<Object> update(@RequestBody ShoppingCartDTO shoppingCartDTO) {
         log.info("Update shopping cart, item info: {}", shoppingCartDTO);
+        if (shoppingCartDTO.getNumber() <= 0) {
+            return Result.error("number is not positive");
+        }
         shoppingCartService.addOrUpdate(shoppingCartDTO, false);
         return Result.success();
     }

@@ -12,5 +12,5 @@ public interface ShoppingCartService {
 
     void clean();
 
-    void deleteById(Integer bookId);
+    void delete(ShoppingCart shoppingCart);
 }
