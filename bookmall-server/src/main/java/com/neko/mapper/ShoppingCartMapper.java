@@ -29,4 +29,7 @@ public interface ShoppingCartMapper {
      * @param shoppingCartList
      */
     void insertBatch(List<ShoppingCart> shoppingCartList);
+
+    @Delete("delete from shopping_cart where user_id = #{userId} and book_id = #{bookId}")
+    void deleteByItemId(Long userId, Integer bookId);
 }

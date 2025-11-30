@@ -23,7 +23,7 @@ public class ShoppingCartController {
     @PostMapping("/add")
     public Result<Object> add(@RequestBody ShoppingCartDTO shoppingCartDTO) {
         log.info("Add shopping cart, item info: {}", shoppingCartDTO);
-        shoppingCartService.add(shoppingCartDTO);
+        shoppingCartService.addOrUpdate(shoppingCartDTO, true);
         return Result.success();
     }
 
@@ -36,6 +36,19 @@ public class ShoppingCartController {
     @DeleteMapping("/clean")
     public Result<Object> clean() {
         shoppingCartService.clean();
+        return Result.success();
+    }
+
+    @DeleteMapping("/{id}")
+    public Result<Object> deleteById(@PathVariable Integer id) {
+        shoppingCartService.deleteById(id);
+        return Result.success();
+    }
+
+    @PutMapping("/update")
+    public Result<Object> update(@RequestBody ShoppingCartDTO shoppingCartDTO) {
+        log.info("Update shopping cart, item info: {}", shoppingCartDTO);
+        shoppingCartService.addOrUpdate(shoppingCartDTO, false);
         return Result.success();
     }
 }

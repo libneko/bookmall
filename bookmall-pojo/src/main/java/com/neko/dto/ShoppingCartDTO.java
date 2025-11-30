@@ -8,4 +8,6 @@ import java.io.Serializable;
 public class ShoppingCartDTO implements Serializable {
 
     private Long bookId;
+
+    private int number = 1;
 }

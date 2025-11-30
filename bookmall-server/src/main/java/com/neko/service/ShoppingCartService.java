@@ -6,9 +6,11 @@ import com.neko.entity.ShoppingCart;
 import java.util.List;
 
 public interface ShoppingCartService {
-    void add(ShoppingCartDTO shoppingCartDTO);
+    void addOrUpdate(ShoppingCartDTO shoppingCartDTO, boolean isAdd);
 
     List<ShoppingCart> show();
 
     void clean();
+
+    void deleteById(Integer bookId);
 }
