@@ -1,7 +1,9 @@
 package com.neko.controller.users;
 
+import com.neko.dto.BookPageQueryDTO;
 import com.neko.entity.Book;
 import com.neko.enums.Status;
+import com.neko.result.PageResult;
 import com.neko.result.Result;
 import com.neko.service.BookService;
 import com.neko.vo.BookVO;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -51,5 +54,12 @@ public class UserBookController {
         redisTemplate.opsForValue().set(key, list);
 
         return Result.success(list);
+    }
+
+    @GetMapping("/page")
+    public Result<PageResult<BookVO>> page(BookPageQueryDTO bookPageQueryDTO) throws IOException {
+        log.info("Paginated query of book(s), {}", bookPageQueryDTO);
+        PageResult<BookVO> pageResult = bookService.pageQuery(bookPageQueryDTO);
+        return Result.success(pageResult);
     }
 }
