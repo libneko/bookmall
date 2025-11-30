@@ -45,11 +45,12 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             shoppingCart.setName(book.getName());
             shoppingCart.setImage(book.getImage());
             shoppingCart.setAmount(book.getPrice());
-        }
-        shoppingCart.setNumber(1);
-        shoppingCart.setCreateTime(LocalDateTime.now());
 
-        shoppingCartMapper.insert(shoppingCart);
+            shoppingCart.setNumber(1);
+            shoppingCart.setCreateTime(LocalDateTime.now());
+
+            shoppingCartMapper.insert(shoppingCart);
+        }
     }
 
     @Override

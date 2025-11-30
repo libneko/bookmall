@@ -26,6 +26,7 @@ public class GlobalExceptionHandler {
     public Result<Object> exceptionHandler(PSQLException ex) {
         ServerErrorMessage serverErrorMessage = ex.getServerErrorMessage();
         String detail = serverErrorMessage.getDetail();
+        log.info("SQL Error: {}", ex.getMessage());
         // UNIQUE
         if (serverErrorMessage.getSQLState().equals("23505")) {
             Pattern pattern = Pattern.compile("\\((.*?)\\)=\\((.*?)\\)");
