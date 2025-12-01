@@ -1,7 +1,6 @@
 package com.neko.service.impl;
 
 import com.neko.constant.MessageConstant;
-import com.neko.constant.PasswordConstant;
 import com.neko.dto.UserDTO;
 import com.neko.dto.UserLoginDTO;
 import com.neko.entity.User;
@@ -29,7 +28,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         BeanUtils.copyProperties(userDTO,user);
 
-        user.setPassword(PasswordUtil.hashPassword(PasswordConstant.DEFAULT_PASSWORD));
+        user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
         user.setStatus(Status.ENABLE.getCode());
 
         userMapper.insert(user);
