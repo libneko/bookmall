@@ -79,4 +79,16 @@
             </if>
         </where>
     </select>
+    
+    <select id="randomList" resultType="com.neko.entity.Book">
+        WITH random_ids AS (
+            SELECT id
+            FROM book
+            WHERE id >= floor(random() * (SELECT max(id) FROM book))::int
+            LIMIT #{n}
+            )
+        SELECT *
+        FROM book
+        WHERE id IN (SELECT id FROM random_ids)
+    </select>
 </mapper>

@@ -1,11 +1,13 @@
 package com.neko.service;
 
-import com.neko.dto.UserDTO;
-import com.neko.dto.UserLoginDTO;
+import com.neko.dto.UserCodeDTO;
+import com.neko.dto.UserPasswordDTO;
 import com.neko.entity.User;
 
 public interface UserService {
-    void register(UserDTO userDTO);
+    User register(UserPasswordDTO userPasswordDTO);
 
-    User login(UserLoginDTO userLoginDTO);
+    User login(UserCodeDTO userCodeDTO);
+
+    User login(UserPasswordDTO userPasswordDTO);
 }

@@ -1,6 +1,8 @@
 package com.neko.mapper;
 
+import com.neko.annotation.AutoFill;
 import com.neko.entity.User;
+import com.neko.enums.OperationType;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -8,18 +10,13 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface UserMapper {
 
-    /**
-     * 根据用户名查询员工
-     *
-     * @param username
-     * @return
-     */
-    @Select("select * from users where username = #{username}")
-    User getByUsername(String username);
+    @Select("select * from users where email = #{email}")
+    User getByEmail(String email);
 
-    @Insert("insert into users (name, username, password, phone, sex, id_number, create_time, update_time, create_user, update_user, status)"
+    @Insert("insert into users (username, email, password, phone, sex, id_number, create_time, update_time, status)"
             +
             "values " +
-            "(#{name}, #{username}, #{password}, #{phone}, #{sex}, #{idNumber}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser}, #{status})")
+            "(#{username}, #{email}, #{password}, #{phone}, #{sex}, #{idNumber}, #{createTime}, #{updateTime}, #{status})")
+    @AutoFill(value = OperationType.INSERT)
     void insert(User user);
 }

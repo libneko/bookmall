@@ -11,6 +11,12 @@ spring:
     password: ${bookmall.datasource.password}
   jackson:
     property-naming-strategy: SNAKE_CASE
+  mail:
+    host: smtp.qq.com
+    port: 587
+    username: 1762993226@qq.com
+    password: ${MAIL_PASSWORD}
+    protocol: smtp
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
@@ -20,7 +26,7 @@ mybatis:
 opensearch:
   url: https://localhost:9200
   username: admin
-  password: Opensearch123@
+  password: ${OPENSEARCH_PASSWORD}
 
 bookmall:
   jwt:
