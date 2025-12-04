@@ -74,9 +74,10 @@ public class UserController {
     }
 
     @PostMapping("/login/verify")
-    public Result<Object> verifyCode(@RequestParam String code) {
+    public Result<Object> verifyCode(@RequestBody Map<String, String> body) {
+        String code = body.get("code");
         // 校验阿里云图形验证码
-        if (!CaptchaUtil.verifyCaptcha(code, "")) {
+        if (!CaptchaUtil.verifyCaptcha(code, System.getenv("SCENE_ID"))) {
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
         return Result.success();

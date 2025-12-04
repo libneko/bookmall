@@ -13,10 +13,16 @@ spring:
     property-naming-strategy: SNAKE_CASE
   mail:
     host: smtp.qq.com
-    port: 587
+    port: 465
     username: 1762993226@qq.com
     password: ${MAIL_PASSWORD}
     protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml

@@ -3,6 +3,8 @@ package com.neko.service.impl;
 import com.neko.service.MailService;
 import com.neko.utils.CodeUtil;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -15,6 +17,9 @@ import java.util.concurrent.TimeUnit;
 public class MailServiceImpl implements MailService {
     private final StringRedisTemplate stringRedisTemplate;
     private final JavaMailSender javaMailSender;
+
+    @Value("${spring.mail.username}")
+    private String fromEmail;
 
     public MailServiceImpl(StringRedisTemplate stringRedisTemplate, JavaMailSender javaMailSender) {
         this.stringRedisTemplate = stringRedisTemplate;
@@ -30,9 +35,10 @@ public class MailServiceImpl implements MailService {
         stringRedisTemplate.opsForValue().set(key, code, timeout, TimeUnit.MINUTES);
 
         SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
         message.setTo(email);
         message.setSubject("小书架");
-        message.setText(code + "为您的验证码，请您于" + timeout + "填写。如非本人操作，请忽略本短信。");
+        message.setText(code + "为您的验证码，请您于" + timeout + "分钟内填写。如非本人操作，请忽略本短信。");
 
         javaMailSender.send(message);
     }
