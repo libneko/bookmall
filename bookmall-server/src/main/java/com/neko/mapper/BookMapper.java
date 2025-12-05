@@ -33,4 +33,6 @@ public interface BookMapper {
 
     @AutoFill(value = OperationType.UPDATE)
     void update(Book book);
+
+    List<Book> randomList();
 }

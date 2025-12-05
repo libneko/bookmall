@@ -56,6 +56,12 @@ public class UserBookController {
         return Result.success(list);
     }
 
+    @GetMapping("/random")
+    public Result<List<BookVO>> random() {
+        List<BookVO> list = bookService.randomList();
+        return Result.success(list);
+    }
+
     @GetMapping("/page")
     public Result<PageResult<BookVO>> page(BookPageQueryDTO bookPageQueryDTO) throws IOException {
         log.info("Paginated query of book(s), {}", bookPageQueryDTO);

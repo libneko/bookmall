@@ -25,4 +25,6 @@ public interface BookService {
     List<Book> list(Long categoryId);
 
     List<BookVO> list(Book book);
+
+    List<BookVO> randomList();
 }

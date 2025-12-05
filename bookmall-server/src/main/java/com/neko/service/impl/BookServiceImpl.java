@@ -192,4 +192,23 @@ public class BookServiceImpl implements BookService {
 
         return bookVOList;
     }
+
+    @Override
+    public List<BookVO> randomList() {
+        List<Book> books = bookMapper.randomList();
+
+        List<BookVO> bookVOList = new ArrayList<>();
+
+        for (Book b : books) {
+            BookVO bookVO = new BookVO();
+            BeanUtils.copyProperties(b, bookVO);
+
+            BookStock bookStock = bookStockMapper.getByBookId(b.getId());
+
+            bookVO.setBookStock(bookStock);
+            bookVOList.add(bookVO);
+        }
+
+        return bookVOList;
+    }
 }
