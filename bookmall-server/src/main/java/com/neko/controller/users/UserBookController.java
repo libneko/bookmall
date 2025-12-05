@@ -57,8 +57,11 @@ public class UserBookController {
     }
 
     @GetMapping("/random")
-    public Result<List<BookVO>> random() {
-        List<BookVO> list = bookService.randomList();
+    public Result<List<BookVO>> random(Long number) {
+        if (number <= 0 || number > 100) {
+            return Result.error("number invalid");
+        }
+        List<BookVO> list = bookService.randomList(number);
         return Result.success(list);
     }
 

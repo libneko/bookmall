@@ -194,8 +194,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookVO> randomList() {
-        List<Book> books = bookMapper.randomList();
+    public List<BookVO> randomList(Long number) {
+        List<Book> books = bookMapper.randomList(number);
 
         List<BookVO> bookVOList = new ArrayList<>();
 

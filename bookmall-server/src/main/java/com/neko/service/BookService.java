@@ -26,5 +26,5 @@ public interface BookService {
 
     List<BookVO> list(Book book);
 
-    List<BookVO> randomList();
+    List<BookVO> randomList(Long number);
 }
