@@ -14,6 +14,7 @@ import com.neko.utils.CodeUtil;
 import com.neko.utils.PasswordUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -27,7 +28,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User register(UserPasswordDTO userPasswordDTO) {
         User user = new User();
-        BeanUtils.copyProperties(userPasswordDTO,user);
+        BeanUtils.copyProperties(userPasswordDTO, user);
 
         user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
         user.setStatus(Status.ENABLE.getCode());
@@ -37,6 +38,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User login(UserCodeDTO userCodeDTO) {
         String email = userCodeDTO.getEmail();
 
@@ -47,8 +49,11 @@ public class UserServiceImpl implements UserService {
             user = new User();
             user.setUsername("小书架用户_" + CodeUtil.generate(8));
             user.setEmail(email);
+            user.setStatus(Status.ENABLE.getCode());
             userMapper.insert(user);
         }
+
+        user = userMapper.getByEmail(email);
 
         return user;
     }
