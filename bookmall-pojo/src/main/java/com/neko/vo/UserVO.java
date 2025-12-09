@@ -23,5 +23,7 @@ public class UserVO implements Serializable {
 
     private Integer sex;
 
+    private String avatar;
+
     private Integer status;
 }

@@ -26,6 +26,8 @@ public class User implements Serializable {
 
     private Integer sex;
 
+    private String avatar;
+
     private Integer status;
 
     private LocalDateTime createTime;

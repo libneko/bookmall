@@ -13,10 +13,10 @@ public interface UserMapper {
     @Select("select * from users where email = #{email}")
     User getByEmail(String email);
 
-    @Insert("insert into users (username, email, password, phone, sex, id_number, create_time, update_time, status)"
+    @Insert("insert into users (username, email, password, phone, sex, avatar, create_time, update_time, status)"
             +
             "values " +
-            "(#{username}, #{email}, #{password}, #{phone}, #{sex}, #{idNumber}, #{createTime}, #{updateTime}, #{status})")
+            "(#{username}, #{email}, #{password}, #{phone}, #{sex}, #{avatar}, #{createTime}, #{updateTime}, #{status})")
     @AutoFill(value = OperationType.INSERT)
     void insert(User user);
 

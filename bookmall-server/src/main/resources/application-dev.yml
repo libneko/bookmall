@@ -6,6 +6,11 @@ bookmall:
     database: bookmall
     username: postgres
     password: pgsql
+  s3:
+    endpoint: "https://s3.oss-cn-hangzhou.aliyuncs.com"
+    access-key-id: ${ALIBABA_CLOUD_ACCESS_KEY_ID}
+    access-key-secret: ${ALIBABA_CLOUD_ACCESS_KEY_SECRET}
+    bucket-name: neko-book
 
 spring:
   data:

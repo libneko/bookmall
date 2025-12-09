@@ -22,6 +22,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
 
+    private final String avatar = "https://neko-book.oss-cn-hangzhou.aliyuncs.com/default_avatar.jpg";
+
     public UserServiceImpl(UserMapper userMapper) {
         this.userMapper = userMapper;
     }
@@ -32,6 +34,7 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userPasswordDTO, user);
 
         user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
+        user.setAvatar(avatar);
         user.setStatus(Status.ENABLE.getCode());
 
         userMapper.insert(user);
@@ -50,6 +53,7 @@ public class UserServiceImpl implements UserService {
             user = new User();
             user.setUsername("小书架用户_" + CodeUtil.generate(8));
             user.setEmail(email);
+            user.setAvatar(avatar);
             user.setStatus(Status.ENABLE.getCode());
             userMapper.insert(user);
         }

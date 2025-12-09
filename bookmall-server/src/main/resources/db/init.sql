@@ -896,7 +896,7 @@ CREATE TABLE users
     password    VARCHAR(128),                                        -- 密码
     phone       VARCHAR(11),                                         -- 手机号
     sex         INTEGER,                                             -- 性别
-    avatar      VARCHAR(64),                                         -- 头像
+    avatar      VARCHAR(128),                                        -- 头像
     status      INT         NOT NULL DEFAULT 1,                      -- 状态 0:禁用，1:启用
     create_time TIMESTAMP,                                           -- 创建时间
     update_time TIMESTAMP,                                           -- 更新时间

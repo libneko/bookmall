@@ -18,4 +18,6 @@ public class UserDTO implements Serializable {
     private String phone;
 
     private Integer sex;
+
+    private String avatar;
 }

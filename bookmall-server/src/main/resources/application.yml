@@ -43,3 +43,8 @@ bookmall:
     user-secret-key: user
     user-ttl: 7200000
     user-token-name: token
+  s3:
+    endpoint: ${bookmall.s3.endpoint}
+    access-key-id: ${bookmall.s3.access-key-id}
+    access-key-secret: ${bookmall.s3.access-key-secret}
+    bucket-name: ${bookmall.s3.bucket-name}
