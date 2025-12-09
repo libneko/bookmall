@@ -38,7 +38,7 @@ bookmall:
   jwt:
     admin-secret-key: admin
     admin-ttl: 7200000
-    admin-token-name: token
+    admin-token-name: authentication
 
     user-secret-key: user
     user-ttl: 7200000

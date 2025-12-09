@@ -93,6 +93,7 @@ public class UserController {
 
         return UserLoginVO.builder()
                 .id(user.getId())
+                .username(user.getUsername())
                 .email(user.getEmail())
                 .token(token)
                 .build();
