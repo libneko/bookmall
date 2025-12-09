@@ -3,6 +3,7 @@ package com.neko.controller.users;
 import com.neko.constant.JwtClaimsConstant;
 import com.neko.constant.MessageConstant;
 import com.neko.dto.UserCodeDTO;
+import com.neko.dto.UserDTO;
 import com.neko.dto.UserPasswordDTO;
 import com.neko.entity.User;
 import com.neko.exception.AccountNotFoundException;
@@ -13,6 +14,7 @@ import com.neko.service.UserService;
 import com.neko.utils.CaptchaUtil;
 import com.neko.utils.JwtUtil;
 import com.neko.vo.UserLoginVO;
+import com.neko.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -97,5 +99,25 @@ public class UserController {
                 .email(user.getEmail())
                 .token(token)
                 .build();
+    }
+
+    @GetMapping("/profile")
+    public Result<UserVO> getProfileById(@RequestParam long id) {
+        User user = userService.getProfileById(id);
+        UserVO userVO = UserVO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .sex(user.getSex())
+                .status(user.getStatus())
+                .build();
+        return Result.success(userVO);
+    }
+
+    @PutMapping("/profile")
+    public Result<Object> updateProfile(@RequestBody UserDTO userDTO) {
+        userService.updateProfile(userDTO);
+        return Result.success();
     }
 }

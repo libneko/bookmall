@@ -895,18 +895,18 @@ CREATE TABLE users
     email       VARCHAR(32) NOT NULL,                                -- 邮箱
     password    VARCHAR(128),                                        -- 密码
     phone       VARCHAR(11),                                         -- 手机号
-    sex         VARCHAR(2),                                          -- 性别
-    id_number   VARCHAR(18),                                         -- 身份证号
+    sex         INTEGER,                                             -- 性别
+    avatar      VARCHAR(64),                                         -- 头像
     status      INT         NOT NULL DEFAULT 1,                      -- 状态 0:禁用，1:启用
     create_time TIMESTAMP,                                           -- 创建时间
     update_time TIMESTAMP,                                           -- 更新时间
     CONSTRAINT idx_username UNIQUE (username)                        -- 唯一索引
 );
 
-INSERT INTO users (username, email, password, phone, sex, id_number, status, create_time, update_time)
+INSERT INTO users (username, email, password, phone, sex, avatar, status, create_time, update_time)
 VALUES ('zhangsan', '1234567890@qq.com',
         '$argon2id$v=19$m=15360,t=2,p=1$LRhT04S5vgwePff9NZQlAQ$1bCLSg7B4fISMKZeB+7M4f2IX+/Txyd1Ma1Aad1SZfE',
-        '12345678901', '1', '110101199001010047', 1, '2025-11-20T19:20:28',
+        '12345678901', 1, 'https://neko-book.oss-cn-hangzhou.aliyuncs.com/default_avatar.jpg', 1, '2025-11-20T19:20:28',
         '2025-11-20T19:20:28');
 
 DROP TABLE IF EXISTS shopping_cart;

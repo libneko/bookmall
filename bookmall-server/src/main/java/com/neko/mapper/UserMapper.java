@@ -19,4 +19,10 @@ public interface UserMapper {
             "(#{username}, #{email}, #{password}, #{phone}, #{sex}, #{idNumber}, #{createTime}, #{updateTime}, #{status})")
     @AutoFill(value = OperationType.INSERT)
     void insert(User user);
+
+    @Select("select * from users where id = #{id}")
+    User getById(Long id);
+
+    @AutoFill(value = OperationType.UPDATE)
+    void update(User user);
 }

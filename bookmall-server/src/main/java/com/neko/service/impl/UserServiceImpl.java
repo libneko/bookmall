@@ -2,6 +2,7 @@ package com.neko.service.impl;
 
 import com.neko.constant.MessageConstant;
 import com.neko.dto.UserCodeDTO;
+import com.neko.dto.UserDTO;
 import com.neko.dto.UserPasswordDTO;
 import com.neko.entity.User;
 import com.neko.enums.Status;
@@ -78,5 +79,18 @@ public class UserServiceImpl implements UserService {
         }
 
         return user;
+    }
+
+    @Override
+    public User getProfileById(Long id) {
+        return userMapper.getById(id);
+    }
+
+    @Override
+    public void updateProfile(UserDTO userDTO) {
+        User user = new User();
+        BeanUtils.copyProperties(userDTO, user);
+
+        userMapper.update(user);
     }
 }
