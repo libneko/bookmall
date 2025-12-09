@@ -16,6 +16,7 @@ import com.neko.utils.JwtUtil;
 import com.neko.vo.UserLoginVO;
 import com.neko.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -97,6 +98,7 @@ public class UserController {
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
+                .avatar(user.getAvatar())
                 .token(token)
                 .build();
     }
@@ -104,14 +106,8 @@ public class UserController {
     @GetMapping("/profile")
     public Result<UserVO> getProfileById(@RequestParam long id) {
         User user = userService.getProfileById(id);
-        UserVO userVO = UserVO.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .phone(user.getPhone())
-                .sex(user.getSex())
-                .status(user.getStatus())
-                .build();
+        UserVO userVO = new UserVO();
+        BeanUtils.copyProperties(user, userVO);
         return Result.success(userVO);
     }
 
