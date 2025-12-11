@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
     public void updateProfile(UserDTO userDTO) {
         User user = new User();
         BeanUtils.copyProperties(userDTO, user);
-
+        user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
         userMapper.update(user);
     }
 }

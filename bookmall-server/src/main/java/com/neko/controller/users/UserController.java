@@ -108,6 +108,7 @@ public class UserController {
         User user = userService.getProfileById(id);
         UserVO userVO = new UserVO();
         BeanUtils.copyProperties(user, userVO);
+        userVO.setPassword(null);
         return Result.success(userVO);
     }
 

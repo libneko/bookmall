@@ -5,7 +5,6 @@
     <update id="update" parameterType="com.neko.entity.User">
         update users
         <set>
-            <if test="name != null">name = #{name},</if>
             <if test="username != null">username = #{username},</if>
             <if test="email != null">email = #{email},</if>
             <if test="password != null">password = #{password},</if>
