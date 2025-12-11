@@ -24,9 +24,9 @@ public class AWSS3Util {
     private String bucketName;
 
     public String upload(byte[] bytes, String objectName) {
-
+        String key = "user_img/" + objectName;
         try (S3Client s3Client = S3Client.builder()
-                .endpointOverride(URI.create(endpoint))
+                .endpointOverride(URI.create("https://s3." + endpoint))
                 .credentialsProvider(
                         StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKeyId, accessKeySecret)))
                 .region(Region.AWS_GLOBAL)
@@ -37,10 +37,10 @@ public class AWSS3Util {
                 .build()) {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
-                    .key(objectName)
+                    .key(key)
                     .build();
             s3Client.putObject(putObjectRequest, RequestBody.fromBytes(bytes));
-            String fileUrl = String.format("%s/%s/%s", endpoint, bucketName, objectName);
+            String fileUrl = String.format("https://%s.%s/%s", bucketName, endpoint, key);
             log.info("File upload success: {}", fileUrl);
             return fileUrl;
         } catch (Exception e) {
