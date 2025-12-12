@@ -69,45 +69,45 @@ public class BookServiceImpl implements BookService {
 
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 
-        if (bookPageQueryDTO.getName() != null) {
-            boolQueryBuilder.must(QueryBuilders.matchQuery("after.name", bookPageQueryDTO.getName()));
+        if (bookPageQueryDTO.getName() != null && !bookPageQueryDTO.getName().isEmpty()) {
+            boolQueryBuilder.must(QueryBuilders.matchQuery("name", bookPageQueryDTO.getName()));
         }
 
         if (bookPageQueryDTO.getCategoryId() != null) {
-            boolQueryBuilder.must(QueryBuilders.termQuery("after.category_id", bookPageQueryDTO.getCategoryId()));
+            boolQueryBuilder.must(QueryBuilders.termQuery("category_id", bookPageQueryDTO.getCategoryId()));
         }
 
         if (bookPageQueryDTO.getStatus() != null) {
-            boolQueryBuilder.filter(QueryBuilders.termQuery("after.status", bookPageQueryDTO.getStatus()));
+            boolQueryBuilder.filter(QueryBuilders.termQuery("status", bookPageQueryDTO.getStatus()));
         }
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
                 .query(boolQueryBuilder)
                 .from(from)
                 .size(bookPageQueryDTO.getPageSize())
-                .sort("after.create_time", SortOrder.DESC);
+                .sort("create_time", SortOrder.DESC); // 直接使用 create_time 字段排序
 
-        SearchRequest searchRequest = new SearchRequest("bookmall_postgres.public.book")
+        SearchRequest searchRequest = new SearchRequest("bookmall.public.book")
                 .source(searchSourceBuilder);
 
         SearchResponse response = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
 
         List<BookVO> books = Arrays.stream(response.getHits().getHits())
                 .map(hit -> {
-                    Map<String, Object> after = (Map<String, Object>) hit.getSourceAsMap().get("after");
+                    Map<String, Object> source = hit.getSourceAsMap();
                     BookVO vo = new BookVO();
-                    vo.setId(((Number) after.get("id")).longValue());
-                    vo.setName((String) after.get("name"));
-                    vo.setAuthor((String) after.get("author"));
-                    vo.setPrice(new BigDecimal(new BigInteger(Base64.getDecoder().decode(after.get("price").toString())), 2));
-                    vo.setImage((String) after.get("image"));
-                    vo.setCategoryId(((Number) after.get("category_id")).longValue());
-                    vo.setStatus((Integer) after.get("status"));
+                    vo.setId(((Number) source.get("id")).longValue());
+                    vo.setName((String) source.get("name"));
+                    vo.setAuthor((String) source.get("author"));
+                    vo.setPrice(new BigDecimal(new BigInteger(Base64.getDecoder().decode(source.get("price").toString())), 2));
+                    vo.setImage((String) source.get("image"));
+                    vo.setCategoryId(((Number) source.get("category_id")).longValue());
+                    vo.setStatus((Integer) source.get("status"));
                     vo.setUpdateTime(LocalDateTime.ofInstant(
-                            Instant.ofEpochMilli(((Number) after.get("update_time")).longValue()),
+                            Instant.ofEpochMilli(((Number) source.get("update_time")).longValue()),
                             ZoneId.systemDefault()
                     ));
-                    vo.setDescription((String) after.get("description"));
+                    vo.setDescription((String) source.get("description"));
                     return vo;
                 }).toList();
 
