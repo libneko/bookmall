@@ -4,11 +4,9 @@ import com.neko.constant.MessageConstant;
 import com.neko.dto.BookDTO;
 import com.neko.dto.BookPageQueryDTO;
 import com.neko.entity.Book;
-import com.neko.entity.BookStock;
 import com.neko.enums.Status;
 import com.neko.exception.DeletionNotAllowedException;
 import com.neko.mapper.BookMapper;
-import com.neko.mapper.BookStockMapper;
 import com.neko.result.PageResult;
 import com.neko.service.BookService;
 import com.neko.vo.BookVO;
@@ -32,17 +30,16 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
-    private final BookStockMapper bookStockMapper;
     private final RestHighLevelClient restHighLevelClient;
 
-    public BookServiceImpl(BookMapper bookMapper, BookStockMapper bookStockMapper, RestHighLevelClient restHighLevelClient) {
+    public BookServiceImpl(BookMapper bookMapper, RestHighLevelClient restHighLevelClient) {
         this.bookMapper = bookMapper;
-        this.bookStockMapper = bookStockMapper;
         this.restHighLevelClient = restHighLevelClient;
     }
 
@@ -53,14 +50,6 @@ public class BookServiceImpl implements BookService {
         BeanUtils.copyProperties(bookDTO, book);
 
         bookMapper.insert(book);
-
-        Long bookId = book.getId();
-
-        BookStock bookStock = bookDTO.getStock();
-        if (Objects.nonNull(bookStock)) {
-            bookStock.setBookId(bookId);
-            bookStockMapper.insert(bookStock);
-        }
     }
 
     @Override
@@ -95,20 +84,23 @@ public class BookServiceImpl implements BookService {
         List<BookVO> books = Arrays.stream(response.getHits().getHits())
                 .map(hit -> {
                     Map<String, Object> source = hit.getSourceAsMap();
-                    BookVO vo = new BookVO();
-                    vo.setId(((Number) source.get("id")).longValue());
-                    vo.setName((String) source.get("name"));
-                    vo.setAuthor((String) source.get("author"));
-                    vo.setPrice(new BigDecimal(new BigInteger(Base64.getDecoder().decode(source.get("price").toString())), 2));
-                    vo.setImage((String) source.get("image"));
-                    vo.setCategoryId(((Number) source.get("category_id")).longValue());
-                    vo.setStatus((Integer) source.get("status"));
-                    vo.setUpdateTime(LocalDateTime.ofInstant(
-                            Instant.ofEpochMilli(((Number) source.get("update_time")).longValue()),
-                            ZoneId.systemDefault()
-                    ));
-                    vo.setDescription((String) source.get("description"));
-                    return vo;
+                    return BookVO.builder()
+                            .id(((Number) source.get("id")).longValue())
+                            .name((String) source.get("name"))
+                            .author((String) source.get("author"))
+                            .categoryId(((Number) source.get("category_id")).longValue())
+                            .price(new BigDecimal(new BigInteger(Base64.getDecoder().decode(source.get("price").toString()))))
+                            .image((String) source.get("image"))
+                            .description((String) source.get("description"))
+                            .status((Integer) source.get("status"))
+                            .updateTime(LocalDateTime.ofInstant(
+                                    Instant.ofEpochMilli(((Number) source.get("update_time")).longValue()),
+                                    ZoneId.systemDefault()
+                            ))
+                            .stock(((Number) source.get("stock")).longValue())
+                            .isbn((String) source.get("isbn"))
+                            .location((String) source.get("location"))
+                            .build();
                 }).toList();
 
         long total = response.getHits().getTotalHits().value();
@@ -124,19 +116,13 @@ public class BookServiceImpl implements BookService {
         }
 
         bookMapper.deleteByIds(ids);
-        bookStockMapper.deleteByBookIds(ids);
     }
 
     @Override
     public BookVO getById(Long id) {
         Book book = bookMapper.getById(id);
-
-        BookStock bookStock = bookStockMapper.getByBookId(id);
-
         BookVO bookVO = new BookVO();
         BeanUtils.copyProperties(book, bookVO);
-        bookVO.setBookStock(bookStock);
-
         return bookVO;
     }
 
@@ -146,14 +132,6 @@ public class BookServiceImpl implements BookService {
         BeanUtils.copyProperties(bookDTO, book);
 
         bookMapper.update(book);
-
-        bookStockMapper.deleteByBookId(book.getId());
-
-        BookStock bookStock = bookDTO.getStock();
-        if (Objects.nonNull(bookStock)) {
-            bookStock.setBookId(book.getId());
-            bookStockMapper.insert(bookStock);
-        }
     }
 
     @Override
@@ -178,37 +156,25 @@ public class BookServiceImpl implements BookService {
     public List<BookVO> list(Book book) {
         List<Book> books = bookMapper.list(book);
 
-        List<BookVO> bookVOList = new ArrayList<>();
-
-        for (Book b : books) {
-            BookVO bookVO = new BookVO();
-            BeanUtils.copyProperties(b, bookVO);
-
-            BookStock bookStock = bookStockMapper.getByBookId(b.getId());
-
-            bookVO.setBookStock(bookStock);
-            bookVOList.add(bookVO);
-        }
-
-        return bookVOList;
+        return books.stream()
+                .map(b -> {
+                    BookVO vo = new BookVO();
+                    BeanUtils.copyProperties(b, vo);
+                    return vo;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<BookVO> randomList(Long number) {
         List<Book> books = bookMapper.randomList(number);
 
-        List<BookVO> bookVOList = new ArrayList<>();
-
-        for (Book b : books) {
-            BookVO bookVO = new BookVO();
-            BeanUtils.copyProperties(b, bookVO);
-
-            BookStock bookStock = bookStockMapper.getByBookId(b.getId());
-
-            bookVO.setBookStock(bookStock);
-            bookVOList.add(bookVO);
-        }
-
-        return bookVOList;
+        return books.stream()
+                .map(b -> {
+                    BookVO vo = new BookVO();
+                    BeanUtils.copyProperties(b, vo);
+                    return vo;
+                })
+                .collect(Collectors.toList());
     }
 }

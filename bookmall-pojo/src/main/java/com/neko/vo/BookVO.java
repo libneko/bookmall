@@ -1,6 +1,5 @@
 package com.neko.vo;
 
-import com.neko.entity.BookStock;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,7 +33,9 @@ public class BookVO implements Serializable {
 
     private LocalDateTime updateTime;
 
-    private String categoryName;
+    private Long stock;
 
-    private BookStock bookStock;
+    private String isbn;
+
+    private String location;
 }

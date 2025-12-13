@@ -48,7 +48,7 @@ public class UserOrderController {
      * @return
      */
     @GetMapping("/orderDetail/{id}")
-    public Result<OrderVO> details(@PathVariable("id") Long id) {
+    public Result<OrderVO> details(@PathVariable Long id) {
         OrderVO orderVO = orderService.details(id);
         return Result.success(orderVO);
     }
@@ -59,7 +59,7 @@ public class UserOrderController {
      * @return
      */
     @PutMapping("/cancel/{id}")
-    public Result<Object> cancel(@PathVariable("id") Long id) {
+    public Result<Object> cancel(@PathVariable Long id) {
         orderService.userCancelById(id);
         return Result.success();
     }

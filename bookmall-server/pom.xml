@@ -10,7 +10,6 @@
     </parent>
 
     <artifactId>bookmall-server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>bookmall-server</name>
     <description>bookmall-server</description>
     <url/>

@@ -30,7 +30,7 @@ public class AdminOrderController {
      * @return
      */
     @GetMapping("/details/{id}")
-    public Result<OrderVO> details(@PathVariable("id") Long id) {
+    public Result<OrderVO> details(@PathVariable Long id) {
         OrderVO orderVO = orderService.details(id);
         return Result.success(orderVO);
     }
@@ -41,7 +41,7 @@ public class AdminOrderController {
      * @return
      */
     @PutMapping("/delivery/{id}")
-    public Result<Object> delivery(@PathVariable("id") Long id) {
+    public Result<Object> delivery(@PathVariable Long id) {
         orderService.delivery(id);
         return Result.success();
     }
@@ -52,7 +52,7 @@ public class AdminOrderController {
      * @return
      */
     @PutMapping("/complete/{id}")
-    public Result<Object> complete(@PathVariable("id") Long id) {
+    public Result<Object> complete(@PathVariable Long id) {
         orderService.complete(id);
         return Result.success();
     }

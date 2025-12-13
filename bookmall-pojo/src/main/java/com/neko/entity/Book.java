@@ -38,4 +38,10 @@ public class Book implements Serializable {
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
+
+    private Long stock;
+
+    private String isbn;
+
+    private String location;
 }
