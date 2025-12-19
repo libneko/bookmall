@@ -1,6 +1,8 @@
 package com.neko.mapper;
 
+import com.github.pagehelper.Page;
 import com.neko.annotation.AutoFill;
+import com.neko.dto.UserPageQueryDTO;
 import com.neko.entity.User;
 import com.neko.enums.OperationType;
 import org.apache.ibatis.annotations.Insert;
@@ -25,4 +27,6 @@ public interface UserMapper {
 
     @AutoFill(value = OperationType.UPDATE)
     void update(User user);
+
+    Page<User> pageQuery(UserPageQueryDTO userPageQueryDTO);
 }

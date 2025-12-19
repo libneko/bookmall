@@ -10,6 +10,8 @@ import com.neko.entity.AddressBook;
 import com.neko.entity.OrderDetail;
 import com.neko.entity.Orders;
 import com.neko.entity.ShoppingCart;
+import com.neko.enums.OrderStatus;
+import com.neko.enums.PayStatus;
 import com.neko.exception.AddressBookBusinessException;
 import com.neko.exception.OrderBusinessException;
 import com.neko.exception.ShoppingCartBusinessException;
@@ -66,8 +68,8 @@ public class OrderServiceImpl implements OrderService {
         Orders orders = new Orders();
         BeanUtils.copyProperties(ordersSubmitDTO, orders);
         orders.setOrderTime(LocalDateTime.now());
-        orders.setPayStatus(Orders.UN_PAID);
-        orders.setStatus(Orders.PENDING_PAYMENT);
+        orders.setPayStatus(PayStatus.UNPAID.getCode());
+        orders.setStatus(OrderStatus.PENDING_PAYMENT.getCode());
         orders.setNumber(String.valueOf(System.currentTimeMillis()));
         orders.setConsignee(addressBook.getConsignee());
         orders.setUserId(userId);
@@ -160,13 +162,13 @@ public class OrderServiceImpl implements OrderService {
         orders.setId(ordersDB.getId());
 
         // 订单处于待接单状态下取消，需要进行退款
-        if (ordersDB.getStatus().equals(Orders.TO_BE_CONFIRMED)) {
+        if (ordersDB.getStatus().equals(OrderStatus.TO_BE_CONFIRMED.getCode())) {
             //支付状态修改为 退款
-            orders.setPayStatus(Orders.REFUND);
+            orders.setPayStatus(PayStatus.REFUND.getCode());
         }
 
         // 更新订单状态、取消原因、取消时间
-        orders.setStatus(Orders.CANCELLED);
+        orders.setStatus(OrderStatus.CANCELLED.getCode());
         orders.setCancelTime(LocalDateTime.now());
         orderMapper.update(orders);
     }
@@ -203,14 +205,14 @@ public class OrderServiceImpl implements OrderService {
         Orders ordersDB = orderMapper.getById(id);
 
         // 校验订单是否存在，并且状态为3
-        if (ordersDB == null || !ordersDB.getStatus().equals(Orders.CONFIRMED)) {
+        if (ordersDB == null || !ordersDB.getStatus().equals(OrderStatus.CONFIRMED.getCode())) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
 
         Orders orders = new Orders();
         orders.setId(ordersDB.getId());
         // 更新订单状态,状态转为派送中
-        orders.setStatus(Orders.DELIVERY_IN_PROGRESS);
+        orders.setStatus(OrderStatus.DELIVERY_IN_PROGRESS.getCode());
 
         orderMapper.update(orders);
     }
@@ -221,14 +223,14 @@ public class OrderServiceImpl implements OrderService {
         Orders ordersDB = orderMapper.getById(id);
 
         // 校验订单是否存在，并且状态为4
-        if (ordersDB == null || !ordersDB.getStatus().equals(Orders.DELIVERY_IN_PROGRESS)) {
+        if (ordersDB == null || !ordersDB.getStatus().equals(OrderStatus.DELIVERY_IN_PROGRESS.getCode())) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
 
         Orders orders = new Orders();
         orders.setId(ordersDB.getId());
         // 更新订单状态,状态转为完成
-        orders.setStatus(Orders.COMPLETED);
+        orders.setStatus(OrderStatus.COMPLETED.getCode());
         orders.setDeliveryTime(LocalDateTime.now());
 
         orderMapper.update(orders);

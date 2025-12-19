@@ -1,8 +1,11 @@
 package com.neko.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.neko.constant.MessageConstant;
 import com.neko.dto.UserCodeDTO;
 import com.neko.dto.UserDTO;
+import com.neko.dto.UserPageQueryDTO;
 import com.neko.dto.UserPasswordDTO;
 import com.neko.entity.User;
 import com.neko.enums.Status;
@@ -10,6 +13,7 @@ import com.neko.exception.AccountLockedException;
 import com.neko.exception.AccountNotFoundException;
 import com.neko.exception.PasswordErrorException;
 import com.neko.mapper.UserMapper;
+import com.neko.result.PageResult;
 import com.neko.service.UserService;
 import com.neko.utils.CodeUtil;
 import com.neko.utils.PasswordUtil;
@@ -96,5 +100,12 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userDTO, user);
         user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
         userMapper.update(user);
+    }
+
+    @Override
+    public PageResult<User> pageQuery(UserPageQueryDTO userPageQueryDTO) {
+        PageHelper.startPage(userPageQueryDTO.getPage(), userPageQueryDTO.getPageSize());
+        Page<User> page = userMapper.pageQuery(userPageQueryDTO);
+        return new PageResult<>(page.getTotal(), page.getResult());
     }
 }

@@ -16,4 +16,13 @@
         </set>
         where id = #{id}
     </update>
+
+    <select id="pageQuery" resultType="com.neko.entity.User">
+        select * from users
+        <where>
+            <if test="username != null and username != ''">
+                and username like concat('%', #{username}, '%')
+            </if>
+        </where>
+    </select>
 </mapper>
