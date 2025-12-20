@@ -42,13 +42,16 @@
         update book
         <set>
             <if test="name != null">name = #{name},</if>
-            <if test="author != null">author = #{author}</if>
-            <if test="categoryId != null">category_id= #{categoryId},</if>
+            <if test="author != null">author = #{author},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
             <if test="price != null">price = #{price},</if>
             <if test="image != null">image = #{image},</if>
             <if test="description != null">description = #{description},</if>
             <if test="status != null">status = #{status},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="stock != null">stock = #{stock},</if>
+            <if test="isbn != null">isbn = #{isbn},</if>
+            <if test="location != location">location = #{location}</if>
         </set>
         where id = #{id}
     </update>
@@ -79,12 +82,11 @@
             </if>
         </where>
     </select>
-    
+
     <select id="randomList" resultType="com.neko.entity.Book">
-        WITH random_ids AS (
-            SELECT id
-            FROM book
-            WHERE id >= floor(random() * (SELECT max(id) FROM book))::int
+        WITH random_ids AS (SELECT id
+                            FROM book
+                            WHERE id >= floor(random() * (SELECT max(id) FROM book)):: int
             LIMIT #{n}
             )
         SELECT *
