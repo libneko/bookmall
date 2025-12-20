@@ -59,22 +59,22 @@ public class BookServiceImpl implements BookService {
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 
         if (bookPageQueryDTO.getName() != null && !bookPageQueryDTO.getName().isEmpty()) {
-            boolQueryBuilder.must(QueryBuilders.matchQuery("name", bookPageQueryDTO.getName()));
+            boolQueryBuilder.must(QueryBuilders.matchQuery("after.name", bookPageQueryDTO.getName()));
         }
 
         if (bookPageQueryDTO.getCategoryId() != null) {
-            boolQueryBuilder.must(QueryBuilders.termQuery("category_id", bookPageQueryDTO.getCategoryId()));
+            boolQueryBuilder.must(QueryBuilders.termQuery("after.category_id", bookPageQueryDTO.getCategoryId()));
         }
 
         if (bookPageQueryDTO.getStatus() != null) {
-            boolQueryBuilder.filter(QueryBuilders.termQuery("status", bookPageQueryDTO.getStatus()));
+            boolQueryBuilder.filter(QueryBuilders.termQuery("after.status", bookPageQueryDTO.getStatus()));
         }
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
                 .query(boolQueryBuilder)
                 .from(from)
                 .size(bookPageQueryDTO.getPageSize())
-                .sort("create_time", SortOrder.DESC); // 直接使用 create_time 字段排序
+                .sort("after.create_time", SortOrder.DESC);
 
         SearchRequest searchRequest = new SearchRequest("bookmall.public.book")
                 .source(searchSourceBuilder);
@@ -83,7 +83,7 @@ public class BookServiceImpl implements BookService {
 
         List<BookVO> books = Arrays.stream(response.getHits().getHits())
                 .map(hit -> {
-                    Map<String, Object> source = hit.getSourceAsMap();
+                    Map<String, Object> source = (Map<String, Object>) hit.getSourceAsMap().get("after");
                     return BookVO.builder()
                             .id(((Number) source.get("id")).longValue())
                             .name((String) source.get("name"))
