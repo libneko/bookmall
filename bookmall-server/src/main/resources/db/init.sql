@@ -750,4 +750,4 @@ CREATE TABLE admin
 );
 
 INSERT INTO admin (username, password)
-VALUES ('admin', 'admin');
+VALUES ('admin', '$argon2id$v=19$m=15360,t=2,p=1$kdrpQSQziXcUiIXszoBAnw$KtajSYCNia4CCFxi2ph0LXRCWJcjaX5K4i04xS+VkRE');
