@@ -3,9 +3,10 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.neko.mapper.BookMapper">
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        insert into book (name, author, category_id, price, image, description, status, create_time, update_time)
+        insert into book (name, author, category_id, price, image, description, status, create_time, update_time, stock,
+                          isbn, location)
         values (#{name}, #{author}, #{categoryId}, #{price}, #{image}, #{description}, #{status}, #{createTime},
-                #{updateTime})
+                #{updateTime}, #{stock}, #{isbn}, #{location})
     </insert>
 
     <select id="pageQuery" resultType="com.neko.vo.BookVO">
