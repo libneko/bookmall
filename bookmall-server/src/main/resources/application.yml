@@ -30,7 +30,7 @@ mybatis:
     map-underscore-to-camel-case: true
 
 opensearch:
-  url: https://localhost:9200
+  url: http://localhost:9200
   username: admin
   password: ${OPENSEARCH_PASSWORD}
 
