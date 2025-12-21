@@ -72,6 +72,7 @@ public class BookController {
 
     @PostMapping("/status/{status}")
     public Result<Object> updateStatus(@PathVariable Integer status, Long id) {
+        log.info("admin update book status: {}, book id: {}", status, id);
         bookService.setStatus(status, id);
         cleanCache("*book_*");
         return Result.success();
