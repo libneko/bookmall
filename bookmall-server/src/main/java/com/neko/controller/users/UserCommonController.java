@@ -15,16 +15,16 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/user/common")
 @Slf4j
-public class CommonController {
+public class UserCommonController {
 
     private final AWSS3Util awsS3Util;
 
-    public CommonController(AWSS3Util awsS3Util) {
+    public UserCommonController(AWSS3Util awsS3Util) {
         this.awsS3Util = awsS3Util;
     }
 
     @PostMapping("/upload")
-    public Result<String> upload(MultipartFile file){
+    public Result<String> upload(MultipartFile file) {
         log.info("File upload: {}", file);
 
         try {
@@ -32,7 +32,7 @@ public class CommonController {
             String ext = originalFilename.substring(originalFilename.lastIndexOf("."));
             String objectName = UUID.randomUUID() + ext;
 
-            String filePath = awsS3Util.upload(file.getBytes(), objectName);
+            String filePath = awsS3Util.uploadUserImage(file.getBytes(), objectName);
             return Result.success(filePath);
         } catch (IOException e) {
             log.error(MessageConstant.UPLOAD_FAILED, e);

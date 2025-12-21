@@ -23,8 +23,16 @@ public class AWSS3Util {
     private String accessKeySecret;
     private String bucketName;
 
-    public String upload(byte[] bytes, String objectName) {
-        String key = "user_img/" + objectName;
+    public String uploadUserImage(byte[] bytes, String objectName) {
+        return upload(bytes, objectName, "user_img/");
+    }
+
+    public String uploadBookImage(byte[] bytes, String objectName) {
+        return upload(bytes, objectName, "book_img/");
+    }
+
+    public String upload(byte[] bytes, String objectName, String prefix) {
+        String key = prefix + objectName;
         try (S3Client s3Client = S3Client.builder()
                 .endpointOverride(URI.create("https://s3." + endpoint))
                 .credentialsProvider(
