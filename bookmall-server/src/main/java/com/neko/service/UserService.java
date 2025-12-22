@@ -6,6 +6,9 @@ import com.neko.dto.UserPageQueryDTO;
 import com.neko.dto.UserPasswordDTO;
 import com.neko.entity.User;
 import com.neko.result.PageResult;
+import com.neko.vo.UserVO;
+
+import java.util.List;
 
 public interface UserService {
     User register(UserPasswordDTO userPasswordDTO);
@@ -14,9 +17,13 @@ public interface UserService {
 
     User login(UserPasswordDTO userPasswordDTO);
 
-    User getProfileById(Long id);
+    UserVO getById(Long id);
 
-    void updateProfile(UserDTO userDTO);
+    void update(UserDTO userDTO);
 
-    PageResult<User> pageQuery(UserPageQueryDTO userPageQueryDTO);
+    PageResult<UserVO> pageQuery(UserPageQueryDTO userPageQueryDTO);
+
+    void deleteBatch(List<Long> ids);
+
+    void setStatus(Integer status, Long id);
 }

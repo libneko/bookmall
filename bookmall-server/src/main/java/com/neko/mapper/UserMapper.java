@@ -9,6 +9,8 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 @Mapper
 public interface UserMapper {
 
@@ -29,4 +31,8 @@ public interface UserMapper {
     void update(User user);
 
     Page<User> pageQuery(UserPageQueryDTO userPageQueryDTO);
+
+    List<User> getByIds(List<Long> ids);
+
+    void deleteByIds(List<Long> ids);
 }

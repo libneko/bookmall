@@ -11,15 +11,20 @@ import com.neko.entity.User;
 import com.neko.enums.Status;
 import com.neko.exception.AccountLockedException;
 import com.neko.exception.AccountNotFoundException;
+import com.neko.exception.DeletionNotAllowedException;
 import com.neko.exception.PasswordErrorException;
 import com.neko.mapper.UserMapper;
 import com.neko.result.PageResult;
 import com.neko.service.UserService;
 import com.neko.utils.CodeUtil;
 import com.neko.utils.PasswordUtil;
+import com.neko.vo.UserVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -90,12 +95,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getProfileById(Long id) {
-        return userMapper.getById(id);
+    public UserVO getById(Long id) {
+        User user = userMapper.getById(id);
+        UserVO userVO = new UserVO();
+        BeanUtils.copyProperties(user, userVO);
+        return userVO;
     }
 
     @Override
-    public void updateProfile(UserDTO userDTO) {
+    public void update(UserDTO userDTO) {
         User user = new User();
         BeanUtils.copyProperties(userDTO, user);
         user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
@@ -103,9 +111,33 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PageResult<User> pageQuery(UserPageQueryDTO userPageQueryDTO) {
+    public PageResult<UserVO> pageQuery(UserPageQueryDTO userPageQueryDTO) {
         PageHelper.startPage(userPageQueryDTO.getPage(), userPageQueryDTO.getPageSize());
         Page<User> page = userMapper.pageQuery(userPageQueryDTO);
-        return new PageResult<>(page.getTotal(), page.getResult());
+        List<UserVO> list = page.getResult().stream().map(user -> {
+            UserVO userVO = new UserVO();
+            BeanUtils.copyProperties(user, userVO);
+            return userVO;
+        }).toList();
+        return new PageResult<>(page.getTotal(), list);
+    }
+
+    @Override
+    public void deleteBatch(List<Long> ids) {
+        List<User> users = userMapper.getByIds(ids);
+        if (users.stream().anyMatch(user -> Objects.equals(user.getStatus(), Status.ENABLE.getCode()))) {
+            throw new DeletionNotAllowedException(MessageConstant.USER_IS_ACTIVE);
+        }
+
+        userMapper.deleteByIds(ids);
+    }
+
+    @Override
+    public void setStatus(Integer status, Long id) {
+        User user = User.builder()
+                .id(id)
+                .status(status)
+                .build();
+        userMapper.update(user);
     }
 }

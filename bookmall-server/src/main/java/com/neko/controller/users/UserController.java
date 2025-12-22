@@ -104,17 +104,14 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public Result<UserVO> getProfileById(@RequestParam long id) {
-        User user = userService.getProfileById(id);
-        UserVO userVO = new UserVO();
-        BeanUtils.copyProperties(user, userVO);
-        userVO.setPassword(null);
+    public Result<UserVO> getById(@RequestParam long id) {
+        UserVO userVO = userService.getById(id);
         return Result.success(userVO);
     }
 
     @PutMapping("/profile")
-    public Result<Object> updateProfile(@RequestBody UserDTO userDTO) {
-        userService.updateProfile(userDTO);
+    public Result<Object> update(@RequestBody UserDTO userDTO) {
+        userService.update(userDTO);
         return Result.success();
     }
 }

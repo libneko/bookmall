@@ -40,14 +40,14 @@ public class BookController {
 
     @GetMapping("/page")
     public Result<PageResult<BookVO>> page(BookPageQueryDTO bookPageQueryDTO) throws IOException {
-        log.info("Paginated query of book(s), {}", bookPageQueryDTO);
+        log.info("Paginated query of book(s): {}", bookPageQueryDTO);
         PageResult<BookVO> pageResult = bookService.pageQuery(bookPageQueryDTO);
         return Result.success(pageResult);
     }
 
     @DeleteMapping
     public Result<Object> delete(@RequestParam List<Long> ids) {
-        log.info("delete book(s), {}", ids);
+        log.info("delete book(s): {}", ids);
         bookService.deleteBatch(ids);
 
         cleanCache("*book_*");
