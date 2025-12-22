@@ -94,7 +94,7 @@ public class BookServiceImpl implements BookService {
                             .description((String) source.get("description"))
                             .status((Integer) source.get("status"))
                             .updateTime(LocalDateTime.ofInstant(
-                                    Instant.ofEpochMilli(((Number) source.get("update_time")).longValue()),
+                                    Instant.ofEpochMilli(((Number) source.get("update_time")).longValue() / 1000),
                                     ZoneId.systemDefault()
                             ))
                             .stock(((Number) source.get("stock")).longValue())
