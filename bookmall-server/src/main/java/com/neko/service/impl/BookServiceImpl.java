@@ -89,7 +89,7 @@ public class BookServiceImpl implements BookService {
                             .name((String) source.get("name"))
                             .author((String) source.get("author"))
                             .categoryId(((Number) source.get("category_id")).longValue())
-                            .price(new BigDecimal(new BigInteger(Base64.getDecoder().decode(source.get("price").toString()))))
+                            .price(new BigDecimal(new BigInteger(Base64.getDecoder().decode(source.get("price").toString())), 2))
                             .image((String) source.get("image"))
                             .description((String) source.get("description"))
                             .status((Integer) source.get("status"))
