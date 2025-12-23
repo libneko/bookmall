@@ -4,12 +4,11 @@ import lombok.Getter;
 
 @Getter
 public enum OrderStatus {
-    PENDING_PAYMENT(1),
-    TO_BE_CONFIRMED(2),
-    CONFIRMED(3),
-    DELIVERY_IN_PROGRESS(4),
-    COMPLETED(5),
-    CANCELLED(6);
+    CREATED(1),     // 待付款
+    PAID(2),        // 已付款
+    SHIPPED(3),     // 已发货
+    COMPLETED(4),   // 已完成
+    CANCELLED(5);   // 已取消
 
     private final int code;
 

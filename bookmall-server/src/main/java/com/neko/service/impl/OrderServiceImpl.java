@@ -8,7 +8,7 @@ import com.neko.dto.OrdersPageQueryDTO;
 import com.neko.dto.OrdersSubmitDTO;
 import com.neko.entity.AddressBook;
 import com.neko.entity.OrderDetail;
-import com.neko.entity.Orders;
+import com.neko.entity.Order;
 import com.neko.entity.ShoppingCart;
 import com.neko.enums.OrderStatus;
 import com.neko.enums.PayStatus;
@@ -23,13 +23,16 @@ import com.neko.result.PageResult;
 import com.neko.service.OrderService;
 import com.neko.vo.OrderSubmitVO;
 import com.neko.vo.OrderVO;
+import com.neko.websocket.WebSocketServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -38,12 +41,16 @@ public class OrderServiceImpl implements OrderService {
     private final ShoppingCartMapper shoppingCartMapper;
     private final OrderMapper orderMapper;
     private final OrderDetailMapper orderDetailMapper;
+    private final WebSocketServer webSocketServer;
+    private final ObjectMapper objectMapper;
 
-    public OrderServiceImpl(AddressBookMapper addressBookMapper, ShoppingCartMapper shoppingCartMapper, OrderMapper orderMapper, OrderDetailMapper orderDetailMapper) {
+    public OrderServiceImpl(AddressBookMapper addressBookMapper, ShoppingCartMapper shoppingCartMapper, OrderMapper orderMapper, OrderDetailMapper orderDetailMapper, WebSocketServer webSocketServer, ObjectMapper objectMapper) {
         this.addressBookMapper = addressBookMapper;
         this.shoppingCartMapper = shoppingCartMapper;
         this.orderMapper = orderMapper;
         this.orderDetailMapper = orderDetailMapper;
+        this.webSocketServer = webSocketServer;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -64,22 +71,22 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 插入数据
-        Orders orders = new Orders();
-        BeanUtils.copyProperties(ordersSubmitDTO, orders);
-        orders.setOrderTime(LocalDateTime.now());
-        orders.setPayStatus(PayStatus.UNPAID.getCode());
-        orders.setStatus(OrderStatus.PENDING_PAYMENT.getCode());
-        orders.setNumber(String.valueOf(System.currentTimeMillis()));
-        orders.setConsignee(addressBook.getConsignee());
-        orders.setUserId(userId);
+        Order order = new Order();
+        BeanUtils.copyProperties(ordersSubmitDTO, order);
+        order.setOrderTime(LocalDateTime.now());
+        order.setPayStatus(PayStatus.UNPAID.getCode());
+        order.setStatus(OrderStatus.CREATED.getCode());
+        order.setNumber(String.valueOf(System.currentTimeMillis()));
+        order.setConsignee(addressBook.getConsignee());
+        order.setUserId(userId);
 
-        orderMapper.insert(orders);
+        orderMapper.insert(order);
 
         List<OrderDetail> orderDetailList = new ArrayList<>();
         for (ShoppingCart cart : list) {
             OrderDetail orderDetail = new OrderDetail();
             BeanUtils.copyProperties(cart, orderDetail);
-            orderDetail.setOrderId(orders.getId());
+            orderDetail.setOrderId(order.getId());
             orderDetailList.add(orderDetail);
         }
 
@@ -88,10 +95,10 @@ public class OrderServiceImpl implements OrderService {
         shoppingCartMapper.deleteByUserId(userId);
 
         return OrderSubmitVO.builder()
-                .id(orders.getId())
-                .orderTime(orders.getOrderTime())
-                .orderNumber(orders.getNumber())
-                .orderAmount(orders.getAmount())
+                .id(order.getId())
+                .orderTime(order.getOrderTime())
+                .orderNumber(order.getNumber())
+                .orderAmount(order.getAmount())
                 .build();
     }
 
@@ -105,20 +112,20 @@ public class OrderServiceImpl implements OrderService {
         ordersPageQueryDTO.setStatus(status);
 
         // 分页条件查询
-        Page<Orders> page = orderMapper.pageQuery(ordersPageQueryDTO);
+        Page<Order> page = orderMapper.pageQuery(ordersPageQueryDTO);
 
         List<OrderVO> list = new ArrayList<>();
 
         // 查询出订单明细，并封装入OrderVO进行响应
         if (page != null && page.getTotal() > 0) {
-            for (Orders orders : page) {
-                Long orderId = orders.getId();// 订单id
+            for (Order order : page) {
+                Long orderId = order.getId();// 订单id
 
                 // 查询订单明细
                 List<OrderDetail> orderDetails = orderDetailMapper.getByOrderId(orderId);
 
                 OrderVO orderVO = new OrderVO();
-                BeanUtils.copyProperties(orders, orderVO);
+                BeanUtils.copyProperties(order, orderVO);
                 orderVO.setOrderDetailList(orderDetails);
 
                 list.add(orderVO);
@@ -130,14 +137,14 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderVO details(Long id) {
         // 根据id查询订单
-        Orders orders = orderMapper.getById(id);
+        Order order = orderMapper.getById(id);
 
         // 查询该订单对应的菜品/套餐明细
-        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(orders.getId());
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(order.getId());
 
         // 将该订单及其详情封装到OrderVO并返回
         OrderVO orderVO = new OrderVO();
-        BeanUtils.copyProperties(orders, orderVO);
+        BeanUtils.copyProperties(order, orderVO);
         orderVO.setOrderDetailList(orderDetailList);
 
         return orderVO;
@@ -146,47 +153,47 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void userCancelById(Long id) {
         // 根据id查询订单
-        Orders ordersDB = orderMapper.getById(id);
+        Order orderDB = orderMapper.getById(id);
 
         // 校验订单是否存在
-        if (ordersDB == null) {
+        if (orderDB == null) {
             throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
         }
 
-        if (ordersDB.getStatus() > 2) {
+        if (orderDB.getStatus() > 2) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
 
-        Orders orders = new Orders();
-        orders.setId(ordersDB.getId());
+        Order order = new Order();
+        order.setId(orderDB.getId());
 
-        // 订单处于待接单状态下取消，需要进行退款
-        if (ordersDB.getStatus().equals(OrderStatus.TO_BE_CONFIRMED.getCode())) {
+        // 订单处于已付款下取消，需要进行退款
+        if (orderDB.getStatus().equals(OrderStatus.PAID.getCode())) {
             //支付状态修改为 退款
-            orders.setPayStatus(PayStatus.REFUND.getCode());
+            order.setPayStatus(PayStatus.REFUND.getCode());
         }
 
         // 更新订单状态、取消原因、取消时间
-        orders.setStatus(OrderStatus.CANCELLED.getCode());
-        orders.setCancelTime(LocalDateTime.now());
-        orderMapper.update(orders);
+        order.setStatus(OrderStatus.CANCELLED.getCode());
+        order.setCancelTime(LocalDateTime.now());
+        orderMapper.update(order);
     }
 
     public PageResult<OrderVO> conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO) {
         PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
 
-        Page<Orders> page = orderMapper.pageQuery(ordersPageQueryDTO);
+        Page<Order> page = orderMapper.pageQuery(ordersPageQueryDTO);
 
         List<OrderVO> orderVOList = getOrderVOList(page);
 
         return new PageResult<>(page.getTotal(), orderVOList);
     }
 
-    private List<OrderVO> getOrderVOList(Page<Orders> page) {
+    private List<OrderVO> getOrderVOList(Page<Order> page) {
         return page.getResult().stream()
-                .map(orders -> {
+                .map(order -> {
                     OrderVO vo = new OrderVO();
-                    BeanUtils.copyProperties(orders, vo);
+                    BeanUtils.copyProperties(order, vo);
                     return vo;
                 })
                 .toList();
@@ -195,42 +202,58 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void delivery(Long id) {
         // 根据id查询订单
-        Orders ordersDB = orderMapper.getById(id);
+        Order orderDB = orderMapper.getById(id);
 
-        // 校验订单是否存在，并且状态为3
-        if (ordersDB == null || !ordersDB.getStatus().equals(OrderStatus.CONFIRMED.getCode())) {
+        // 校验订单是否存在，并且状态为 PAID
+        if (orderDB == null || !orderDB.getStatus().equals(OrderStatus.PAID.getCode())) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
 
-        Orders orders = new Orders();
-        orders.setId(ordersDB.getId());
-        // 更新订单状态,状态转为派送中
-        orders.setStatus(OrderStatus.DELIVERY_IN_PROGRESS.getCode());
+        Order order = new Order();
+        order.setId(orderDB.getId());
+        // 更新订单状态,状态转为已发货
+        order.setStatus(OrderStatus.SHIPPED.getCode());
 
-        orderMapper.update(orders);
+        orderMapper.update(order);
     }
 
     @Override
     public void complete(Long id) {
         // 根据id查询订单
-        Orders ordersDB = orderMapper.getById(id);
+        Order orderDB = orderMapper.getById(id);
 
-        // 校验订单是否存在，并且状态为4
-        if (ordersDB == null || !ordersDB.getStatus().equals(OrderStatus.DELIVERY_IN_PROGRESS.getCode())) {
+        // 校验订单是否存在，并且状态为 SHIPPED
+        if (orderDB == null || !orderDB.getStatus().equals(OrderStatus.SHIPPED.getCode())) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
 
-        Orders orders = new Orders();
-        orders.setId(ordersDB.getId());
+        Order order = new Order();
+        order.setId(orderDB.getId());
         // 更新订单状态,状态转为完成
-        orders.setStatus(OrderStatus.COMPLETED.getCode());
-        orders.setDeliveryTime(LocalDateTime.now());
+        order.setStatus(OrderStatus.COMPLETED.getCode());
+        order.setDeliveryTime(LocalDateTime.now());
 
-        orderMapper.update(orders);
+        orderMapper.update(order);
     }
 
     @Override
     public void reminder(Long id) {
-        // TODO
+        Order order = orderMapper.getById(id);
+
+        if (order == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        Map<String, Object> map = Map.of(
+                "type", 2,
+                "orderId", id,
+                "content", "Order number: " + order.getNumber()
+        );
+
+        try {
+            webSocketServer.sendToAllClient(objectMapper.writeValueAsString(map));
+        } catch (Exception e) {
+            log.error("", e);
+        }
     }
 }

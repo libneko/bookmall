@@ -32,7 +32,7 @@ public class UserOrderController {
      *
      * @param page
      * @param pageSize
-     * @param status   订单状态 1待付款 2待接单 3已接单 4派送中 5已完成 6已取消
+     * @param status   订单状态
      * @return
      */
     @GetMapping("/historyOrders")
@@ -64,6 +64,12 @@ public class UserOrderController {
         return Result.success();
     }
 
+    /**
+     * 用户催单
+     *
+     * @param id
+     * @return
+     */
     @GetMapping("/reminder/{id}")
     public Result<Object> reminder(@PathVariable Long id) {
         orderService.reminder(id);

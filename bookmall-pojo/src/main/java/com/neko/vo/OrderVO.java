@@ -1,7 +1,7 @@
 package com.neko.vo;
 
 import com.neko.entity.OrderDetail;
-import com.neko.entity.Orders;
+import com.neko.entity.Order;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class OrderVO extends Orders {
+public class OrderVO extends Order {
 
     // 订单信息
     private String orderBooks;
