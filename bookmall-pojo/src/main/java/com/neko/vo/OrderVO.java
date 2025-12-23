@@ -15,7 +15,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class OrderVO extends Orders {
 
-    // 订单菜品信息
+    // 订单信息
     private String orderBooks;
 
     // 订单详情

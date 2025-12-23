@@ -26,7 +26,6 @@ import com.neko.vo.OrderVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -184,19 +183,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private List<OrderVO> getOrderVOList(Page<Orders> page) {
-        // 需要返回订单菜品信息，自定义OrderVO响应结果
-        List<OrderVO> orderVOList = new ArrayList<>();
-
-        List<Orders> ordersList = page.getResult();
-        if (!CollectionUtils.isEmpty(ordersList)) {
-            for (Orders orders : ordersList) {
-                // 将共同字段复制到OrderVO
-                OrderVO orderVO = new OrderVO();
-                BeanUtils.copyProperties(orders, orderVO);
-                orderVOList.add(orderVO);
-            }
-        }
-        return orderVOList;
+        return page.getResult().stream()
+                .map(orders -> {
+                    OrderVO vo = new OrderVO();
+                    BeanUtils.copyProperties(orders, vo);
+                    return vo;
+                })
+                .toList();
     }
 
     @Override

@@ -105,12 +105,14 @@ public class UserController {
 
     @GetMapping("/profile")
     public Result<UserVO> getById(@RequestParam long id) {
+        log.info("get user profile, {}", id);
         UserVO userVO = userService.getById(id);
         return Result.success(userVO);
     }
 
     @PutMapping("/profile")
     public Result<Object> update(@RequestBody UserDTO userDTO) {
+        log.info("update user profile: {}", userDTO);
         userService.update(userDTO);
         return Result.success();
     }
