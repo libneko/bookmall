@@ -752,3 +752,25 @@ CREATE TABLE admin
 
 INSERT INTO admin (username, password)
 VALUES ('admin', '$argon2id$v=19$m=15360,t=2,p=1$kdrpQSQziXcUiIXszoBAnw$KtajSYCNia4CCFxi2ph0LXRCWJcjaX5K4i04xS+VkRE');
+
+DROP TABLE IF EXISTS orders;
+CREATE TABLE orders
+(
+    id                      BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, -- 主键
+    number                  VARCHAR(50),                                     -- 订单号
+    status                  INT            NOT NULL DEFAULT 1,               -- 订单状态 1待付款 2待接单 3已接单 4派送中 5已完成 6已取消 7退款
+    user_id                 BIGINT         NOT NULL,                         -- 下单用户
+    address_book_id         BIGINT         NOT NULL,                         -- 地址id
+    order_time              TIMESTAMP      NOT NULL,                         -- 下单时间
+    checkout_time           TIMESTAMP,                                       -- 结账时间
+    pay_method              INT            NOT NULL DEFAULT 1,               -- 支付方式 1微信,2支付宝
+    pay_status              SMALLINT       NOT NULL DEFAULT 0,               -- 支付状态 0未支付 1已支付 2退款
+    amount                  DECIMAL(10, 2) NOT NULL,                         -- 实收金额
+    user_name               VARCHAR(32),                                     -- 用户名称
+    phone                   VARCHAR(11),                                     -- 手机号
+    consignee               VARCHAR(32),                                     -- 收货人
+    cancel_time             TIMESTAMP,                                       -- 订单取消时间
+    estimated_delivery_time TIMESTAMP,                                       -- 预计送达时间
+    delivery_time           TIMESTAMP,                                       -- 送达时间
+    shipping_fee            DECIMAL(10, 2) DEFAULT 0                          -- 运费
+);
