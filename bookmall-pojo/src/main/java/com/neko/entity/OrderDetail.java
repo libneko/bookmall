@@ -23,9 +23,10 @@ public class OrderDetail implements Serializable {
     // 名称
     private String name;
 
-    // 订单id
+    // 订单 id
     private Long orderId;
 
+    // 书本 id
     private Long bookId;
 
     // 数量

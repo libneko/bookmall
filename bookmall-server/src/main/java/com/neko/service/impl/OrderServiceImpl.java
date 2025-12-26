@@ -136,10 +136,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderVO details(Long id) {
-        // 根据id查询订单
+        // 根据 id 查询订单
         Order order = orderMapper.getById(id);
 
-        // 查询该订单对应的菜品/套餐明细
+        // 查询该订单对应的书本明细
         List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(order.getId());
 
         // 将该订单及其详情封装到OrderVO并返回
@@ -152,7 +152,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void userCancelById(Long id) {
-        // 根据id查询订单
+        // 根据 id 查询订单
         Order orderDB = orderMapper.getById(id);
 
         // 校验订单是否存在

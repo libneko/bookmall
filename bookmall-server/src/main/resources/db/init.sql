@@ -753,6 +753,18 @@ CREATE TABLE admin
 INSERT INTO admin (username, password)
 VALUES ('admin', '$argon2id$v=19$m=15360,t=2,p=1$kdrpQSQziXcUiIXszoBAnw$KtajSYCNia4CCFxi2ph0LXRCWJcjaX5K4i04xS+VkRE');
 
+DROP TABLE IF EXISTS order_detail;
+CREATE TABLE order_detail
+(
+    id        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, -- 主键
+    name      VARCHAR(32),                                     -- 名称
+    image     VARCHAR(255),                                    -- 图片
+    order_id  BIGINT NOT NULL,                                 -- 订单id
+    book_id   BIGINT,                                          -- 书本id
+    number    INT NOT NULL DEFAULT 1,                          -- 数量
+    amount    DECIMAL(10, 2) NOT NULL                          -- 金额
+);
+
 DROP TABLE IF EXISTS orders;
 CREATE TABLE orders
 (
