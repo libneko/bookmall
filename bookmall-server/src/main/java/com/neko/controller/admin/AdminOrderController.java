@@ -5,10 +5,12 @@ import com.neko.result.PageResult;
 import com.neko.result.Result;
 import com.neko.service.OrderService;
 import com.neko.vo.OrderVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin/order")
+@Slf4j
 public class AdminOrderController {
 
     private final OrderService orderService;
@@ -19,6 +21,7 @@ public class AdminOrderController {
 
     @GetMapping("/conditionSearch")
     public Result<PageResult<OrderVO>> conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO) {
+        log.info("Admin search order(s): {}", ordersPageQueryDTO);
         PageResult<OrderVO> pageResult = orderService.conditionSearch(ordersPageQueryDTO);
         return Result.success(pageResult);
     }

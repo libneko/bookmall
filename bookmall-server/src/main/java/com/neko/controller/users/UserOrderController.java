@@ -37,6 +37,7 @@ public class UserOrderController {
      */
     @GetMapping("/historyOrders")
     public Result<PageResult<OrderVO>> page(int page, int pageSize, Integer status) {
+        log.info("user search order(s): page={}, pageSize={}, status={}", page, pageSize, status);
         PageResult<OrderVO> pageResult = orderService.pageQuery4User(page, pageSize, status);
         return Result.success(pageResult);
     }

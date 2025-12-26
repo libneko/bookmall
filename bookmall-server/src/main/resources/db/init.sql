@@ -756,13 +756,13 @@ VALUES ('admin', '$argon2id$v=19$m=15360,t=2,p=1$kdrpQSQziXcUiIXszoBAnw$KtajSYCN
 DROP TABLE IF EXISTS order_detail;
 CREATE TABLE order_detail
 (
-    id        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, -- 主键
-    name      VARCHAR(32),                                     -- 名称
-    image     VARCHAR(255),                                    -- 图片
-    order_id  BIGINT NOT NULL,                                 -- 订单id
-    book_id   BIGINT,                                          -- 书本id
-    number    INT NOT NULL DEFAULT 1,                          -- 数量
-    amount    DECIMAL(10, 2) NOT NULL                          -- 金额
+    id       BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, -- 主键
+    name     VARCHAR(32),                                     -- 名称
+    image    VARCHAR(255),                                    -- 图片
+    order_id BIGINT         NOT NULL,                         -- 订单id
+    book_id  BIGINT,                                          -- 书本id
+    number   INT            NOT NULL DEFAULT 1,               -- 数量
+    amount   DECIMAL(10, 2) NOT NULL                          -- 金额
 );
 
 DROP TABLE IF EXISTS orders;
@@ -784,5 +784,5 @@ CREATE TABLE orders
     cancel_time             TIMESTAMP,                                       -- 订单取消时间
     estimated_delivery_time TIMESTAMP,                                       -- 预计送达时间
     delivery_time           TIMESTAMP,                                       -- 送达时间
-    shipping_fee            DECIMAL(10, 2) DEFAULT 0                          -- 运费
+    shipping_fee            DECIMAL(10, 2)          DEFAULT 0                -- 运费
 );
