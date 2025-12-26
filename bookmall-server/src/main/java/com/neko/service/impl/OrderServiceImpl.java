@@ -1,7 +1,5 @@
 package com.neko.service.impl;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.neko.constant.MessageConstant;
 import com.neko.context.BaseContext;
 import com.neko.dto.OrdersPageQueryDTO;
@@ -44,7 +42,9 @@ public class OrderServiceImpl implements OrderService {
     private final WebSocketServer webSocketServer;
     private final ObjectMapper objectMapper;
 
-    public OrderServiceImpl(AddressBookMapper addressBookMapper, ShoppingCartMapper shoppingCartMapper, OrderMapper orderMapper, OrderDetailMapper orderDetailMapper, WebSocketServer webSocketServer, ObjectMapper objectMapper) {
+    public OrderServiceImpl(AddressBookMapper addressBookMapper, ShoppingCartMapper shoppingCartMapper,
+                            OrderMapper orderMapper, OrderDetailMapper orderDetailMapper, WebSocketServer webSocketServer,
+                            ObjectMapper objectMapper) {
         this.addressBookMapper = addressBookMapper;
         this.shoppingCartMapper = shoppingCartMapper;
         this.orderMapper = orderMapper;
@@ -105,19 +105,21 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public PageResult<OrderVO> pageQuery4User(int pageNum, int pageSize, Integer status) {
         // 设置分页
-        PageHelper.startPage(pageNum, pageSize);
-
         OrdersPageQueryDTO ordersPageQueryDTO = new OrdersPageQueryDTO();
         ordersPageQueryDTO.setUserId(BaseContext.getCurrentId());
         ordersPageQueryDTO.setStatus(status);
+        ordersPageQueryDTO.setPage(pageNum);
+        ordersPageQueryDTO.setPageSize(pageSize);
+        ordersPageQueryDTO.setOffset((pageNum - 1) * pageSize);
 
         // 分页条件查询
-        Page<Order> page = orderMapper.pageQuery(ordersPageQueryDTO);
+        Long total = orderMapper.count(ordersPageQueryDTO);
+        List<Order> page = orderMapper.pageQuery(ordersPageQueryDTO);
 
         List<OrderVO> list = new ArrayList<>();
 
         // 查询出订单明细，并封装入OrderVO进行响应
-        if (page != null && page.getTotal() > 0) {
+        if (page != null && !page.isEmpty()) {
             for (Order order : page) {
                 Long orderId = order.getId();// 订单id
 
@@ -131,7 +133,7 @@ public class OrderServiceImpl implements OrderService {
                 list.add(orderVO);
             }
         }
-        return new PageResult<>(page.getTotal(), list);
+        return new PageResult<>(total, list);
     }
 
     @Override
@@ -169,7 +171,7 @@ public class OrderServiceImpl implements OrderService {
 
         // 订单处于已付款下取消，需要进行退款
         if (orderDB.getStatus().equals(OrderStatus.PAID.getCode())) {
-            //支付状态修改为 退款
+            // 支付状态修改为 退款
             order.setPayStatus(PayStatus.REFUND.getCode());
         }
 
@@ -180,17 +182,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public PageResult<OrderVO> conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO) {
-        PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
+        ordersPageQueryDTO.setOffset((ordersPageQueryDTO.getPage() - 1) * ordersPageQueryDTO.getPageSize());
 
-        Page<Order> page = orderMapper.pageQuery(ordersPageQueryDTO);
+        Long total = orderMapper.count(ordersPageQueryDTO);
+        List<Order> page = orderMapper.pageQuery(ordersPageQueryDTO);
 
         List<OrderVO> orderVOList = getOrderVOList(page);
 
-        return new PageResult<>(page.getTotal(), orderVOList);
+        return new PageResult<>(total, orderVOList);
     }
 
-    private List<OrderVO> getOrderVOList(Page<Order> page) {
-        return page.getResult().stream()
+    private List<OrderVO> getOrderVOList(List<Order> page) {
+        return page.stream()
                 .map(order -> {
                     OrderVO vo = new OrderVO();
                     BeanUtils.copyProperties(order, vo);
@@ -247,8 +250,7 @@ public class OrderServiceImpl implements OrderService {
         Map<String, Object> map = Map.of(
                 "type", 2,
                 "orderId", id,
-                "content", "Order number: " + order.getNumber()
-        );
+                "content", "Order number: " + order.getNumber());
 
         try {
             webSocketServer.sendToAllClient(objectMapper.writeValueAsString(map));

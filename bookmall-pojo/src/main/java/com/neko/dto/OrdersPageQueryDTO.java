@@ -13,6 +13,9 @@ public class OrdersPageQueryDTO implements Serializable {
 
     private int pageSize;
 
+    // 数据库查询偏移量
+    private int offset;
+
     private String number;
 
     private String phone;

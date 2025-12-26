@@ -48,20 +48,45 @@
             <if test="phone != null and phone!=''">
                 and phone like concat('%',#{phone},'%')
             </if>
-            <if test="userId != null">
+            <if test="userId != null and userId!=''">
                 and user_id = #{userId}
             </if>
-            <if test="status != null">
+            <if test="status != null and status!=''">
                 and status = #{status}
             </if>
-            <if test="beginTime != null">
+            <if test="beginTime != null and beginTime!=''">
                 and order_time &gt;= #{beginTime}
             </if>
-            <if test="endTime != null">
+            <if test="endTime != null and endTime!=''">
                 and order_time &lt;= #{endTime}
             </if>
         </where>
         order by order_time desc
+        limit #{pageSize} offset #{offset}
+    </select>
+
+    <select id="count" resultType="java.lang.Long">
+        select count(id) from orders
+        <where>
+            <if test="number != null and number!=''">
+                and number like concat('%',#{number},'%')
+            </if>
+            <if test="phone != null and phone!=''">
+                and phone like concat('%',#{phone},'%')
+            </if>
+            <if test="userId != null and userId!=''">
+                and user_id = #{userId}
+            </if>
+            <if test="status != null and status!=''">
+                and status = #{status}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and order_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and order_time &lt;= #{endTime}
+            </if>
+        </where>
     </select>
 
     <select id="sumByMap" resultType="java.lang.Double">

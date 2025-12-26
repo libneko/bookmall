@@ -1,6 +1,5 @@
 package com.neko.mapper;
 
-import com.github.pagehelper.Page;
 import com.neko.dto.OrdersPageQueryDTO;
 import com.neko.entity.Order;
 import org.apache.ibatis.annotations.Mapper;
@@ -36,7 +35,14 @@ public interface OrderMapper {
      *
      * @param ordersPageQueryDTO
      */
-    Page<Order> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
+    List<Order> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
+
+    /**
+     * 条件查询订单数量
+     *
+     * @param ordersPageQueryDTO
+     */
+    Long count(OrdersPageQueryDTO ordersPageQueryDTO);
 
     /**
      * 根据id查询订单
