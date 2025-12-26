@@ -34,6 +34,7 @@ public class AddressBookController {
 
     @PutMapping
     public Result<Object> update(@RequestBody AddressBook addressBook) {
+        addressBook.setUserId(BaseContext.getCurrentId());
         addressBookService.update(addressBook);
         return Result.success();
     }
