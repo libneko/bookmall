@@ -1,13 +1,14 @@
 package com.neko.service;
 
-import com.neko.dto.OrdersPageQueryDTO;
-import com.neko.dto.OrdersSubmitDTO;
+import com.neko.dto.OrderPageQueryDTO;
+import com.neko.dto.OrderPaymentDTO;
+import com.neko.dto.OrderSubmitDTO;
 import com.neko.result.PageResult;
 import com.neko.vo.OrderSubmitVO;
 import com.neko.vo.OrderVO;
 
 public interface OrderService {
-    OrderSubmitVO submitOrder(OrdersSubmitDTO ordersSubmitDTO);
+    OrderSubmitVO submitOrder(OrderSubmitDTO orderSubmitDTO);
 
     /**
      * 用户端订单分页查询
@@ -37,10 +38,10 @@ public interface OrderService {
     /**
      * 条件搜索订单
      *
-     * @param ordersPageQueryDTO
+     * @param orderPageQueryDTO
      * @return
      */
-    PageResult<OrderVO> conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO);
+    PageResult<OrderVO> conditionSearch(OrderPageQueryDTO orderPageQueryDTO);
 
     /**
      * 派送订单
@@ -57,4 +58,8 @@ public interface OrderService {
     void complete(Long id);
 
     void reminder(Long id);
+
+    void payment(OrderPaymentDTO orderPaymentDTO);
+
+    void paySuccess(String orderNumber);
 }

@@ -1,6 +1,7 @@
 package com.neko.controller.users;
 
-import com.neko.dto.OrdersSubmitDTO;
+import com.neko.dto.OrderPaymentDTO;
+import com.neko.dto.OrderSubmitDTO;
 import com.neko.result.PageResult;
 import com.neko.result.Result;
 import com.neko.service.OrderService;
@@ -21,10 +22,17 @@ public class UserOrderController {
     }
 
     @PostMapping("/submit")
-    public Result<OrderSubmitVO> submit(@RequestBody OrdersSubmitDTO ordersSubmitDTO) {
-        log.info("用户下单，参数为：{}", ordersSubmitDTO);
-        OrderSubmitVO orderSubmitVO = orderService.submitOrder(ordersSubmitDTO);
+    public Result<OrderSubmitVO> submit(@RequestBody OrderSubmitDTO orderSubmitDTO) {
+        log.info("用户下单，参数为：{}", orderSubmitDTO);
+        OrderSubmitVO orderSubmitVO = orderService.submitOrder(orderSubmitDTO);
         return Result.success(orderSubmitVO);
+    }
+
+    @PutMapping("/payment")
+    public Result<Object> payment(@RequestBody OrderPaymentDTO orderPaymentDTO) {
+        log.info("订单支付：{}", orderPaymentDTO);
+        orderService.payment(orderPaymentDTO);
+        return Result.success();
     }
 
     /**

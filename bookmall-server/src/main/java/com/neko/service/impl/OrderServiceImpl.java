@@ -2,8 +2,9 @@ package com.neko.service.impl;
 
 import com.neko.constant.MessageConstant;
 import com.neko.context.BaseContext;
-import com.neko.dto.OrdersPageQueryDTO;
-import com.neko.dto.OrdersSubmitDTO;
+import com.neko.dto.OrderPageQueryDTO;
+import com.neko.dto.OrderPaymentDTO;
+import com.neko.dto.OrderSubmitDTO;
 import com.neko.entity.AddressBook;
 import com.neko.entity.OrderDetail;
 import com.neko.entity.Order;
@@ -29,6 +30,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,9 +56,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderSubmitVO submitOrder(OrdersSubmitDTO ordersSubmitDTO) {
+    public OrderSubmitVO submitOrder(OrderSubmitDTO orderSubmitDTO) {
         // 处理异常情况
-        AddressBook addressBook = addressBookMapper.getById(ordersSubmitDTO.getAddressBookId());
+        AddressBook addressBook = addressBookMapper.getById(orderSubmitDTO.getAddressBookId());
         if (addressBook == null) {
             throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
         }
@@ -72,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
 
         // 插入数据
         Order order = new Order();
-        BeanUtils.copyProperties(ordersSubmitDTO, order);
+        BeanUtils.copyProperties(orderSubmitDTO, order);
         order.setOrderTime(LocalDateTime.now());
         order.setPayStatus(PayStatus.UNPAID.getCode());
         order.setStatus(OrderStatus.CREATED.getCode());
@@ -105,16 +107,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public PageResult<OrderVO> pageQuery4User(int pageNum, int pageSize, Integer status) {
         // 设置分页
-        OrdersPageQueryDTO ordersPageQueryDTO = new OrdersPageQueryDTO();
-        ordersPageQueryDTO.setUserId(BaseContext.getCurrentId());
-        ordersPageQueryDTO.setStatus(status);
-        ordersPageQueryDTO.setPage(pageNum);
-        ordersPageQueryDTO.setPageSize(pageSize);
-        ordersPageQueryDTO.setOffset((pageNum - 1) * pageSize);
+        OrderPageQueryDTO orderPageQueryDTO = new OrderPageQueryDTO();
+        orderPageQueryDTO.setUserId(BaseContext.getCurrentId());
+        orderPageQueryDTO.setStatus(status);
+        orderPageQueryDTO.setPage(pageNum);
+        orderPageQueryDTO.setPageSize(pageSize);
+        orderPageQueryDTO.setOffset((pageNum - 1) * pageSize);
 
         // 分页条件查询
-        Long total = orderMapper.count(ordersPageQueryDTO);
-        List<Order> page = orderMapper.pageQuery(ordersPageQueryDTO);
+        Long total = orderMapper.count(orderPageQueryDTO);
+        List<Order> page = orderMapper.pageQuery(orderPageQueryDTO);
 
         List<OrderVO> list = new ArrayList<>();
 
@@ -181,11 +183,11 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(order);
     }
 
-    public PageResult<OrderVO> conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO) {
-        ordersPageQueryDTO.setOffset((ordersPageQueryDTO.getPage() - 1) * ordersPageQueryDTO.getPageSize());
+    public PageResult<OrderVO> conditionSearch(OrderPageQueryDTO orderPageQueryDTO) {
+        orderPageQueryDTO.setOffset((orderPageQueryDTO.getPage() - 1) * orderPageQueryDTO.getPageSize());
 
-        Long total = orderMapper.count(ordersPageQueryDTO);
-        List<Order> page = orderMapper.pageQuery(ordersPageQueryDTO);
+        Long total = orderMapper.count(orderPageQueryDTO);
+        List<Order> page = orderMapper.pageQuery(orderPageQueryDTO);
 
         List<OrderVO> orderVOList = getOrderVOList(page);
 
@@ -258,4 +260,34 @@ public class OrderServiceImpl implements OrderService {
             log.error("", e);
         }
     }
+
+    @Override
+    public void payment(OrderPaymentDTO orderPaymentDTO) {
+        paySuccess(orderPaymentDTO.getOrderNumber());
+    }
+
+    @Override
+    public void paySuccess(String orderNumber) {
+        // 根据订单号查询订单
+        Order orderDB = orderMapper.getByNumber(orderNumber);
+
+        // 根据订单id更新订单的状态、支付方式、支付状态、结账时间
+        Order orders = Order.builder()
+                .id(orderDB.getId())
+                .status(OrderStatus.PAID.getCode())
+                .payStatus(PayStatus.PAID.getCode())
+                .checkoutTime(LocalDateTime.now())
+                .build();
+
+        orderMapper.update(orders);
+
+        // 通过 websocket 通知商家
+        Map<String, Object> map = new HashMap<>();
+        map.put("type", 1); // 1:来单通知
+        map.put("orderId", orderDB.getId());
+        map.put("content", "订单号: " + orderNumber);
+        String msg = objectMapper.writeValueAsString(map);
+        webSocketServer.sendToAllClient(msg);
+    }
+
 }

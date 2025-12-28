@@ -1,6 +1,6 @@
 package com.neko.mapper;
 
-import com.neko.dto.OrdersPageQueryDTO;
+import com.neko.dto.OrderPageQueryDTO;
 import com.neko.entity.Order;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -33,16 +33,16 @@ public interface OrderMapper {
     /**
      * 分页条件查询并按下单时间排序
      *
-     * @param ordersPageQueryDTO
+     * @param orderPageQueryDTO
      */
-    List<Order> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
+    List<Order> pageQuery(OrderPageQueryDTO orderPageQueryDTO);
 
     /**
      * 条件查询订单数量
      *
-     * @param ordersPageQueryDTO
+     * @param orderPageQueryDTO
      */
-    Long count(OrdersPageQueryDTO ordersPageQueryDTO);
+    Long count(OrderPageQueryDTO orderPageQueryDTO);
 
     /**
      * 根据id查询订单
@@ -66,4 +66,7 @@ public interface OrderMapper {
     Double sumByMap(Map<String, Object> map);
 
     Integer countByMap(Map<String, Object> map);
+
+    @Select("select * from orders where number = #{orderNumber}")
+    Order getByNumber(String orderNumber);
 }

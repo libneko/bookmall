@@ -1,6 +1,6 @@
 package com.neko.controller.admin;
 
-import com.neko.dto.OrdersPageQueryDTO;
+import com.neko.dto.OrderPageQueryDTO;
 import com.neko.result.PageResult;
 import com.neko.result.Result;
 import com.neko.service.OrderService;
@@ -20,9 +20,9 @@ public class AdminOrderController {
     }
 
     @GetMapping("/conditionSearch")
-    public Result<PageResult<OrderVO>> conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO) {
-        log.info("Admin search order(s): {}", ordersPageQueryDTO);
-        PageResult<OrderVO> pageResult = orderService.conditionSearch(ordersPageQueryDTO);
+    public Result<PageResult<OrderVO>> conditionSearch(OrderPageQueryDTO orderPageQueryDTO) {
+        log.info("Admin search order(s): {}", orderPageQueryDTO);
+        PageResult<OrderVO> pageResult = orderService.conditionSearch(orderPageQueryDTO);
         return Result.success(pageResult);
     }
 
