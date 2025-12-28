@@ -45,8 +45,8 @@ public class OrderServiceImpl implements OrderService {
     private final ObjectMapper objectMapper;
 
     public OrderServiceImpl(AddressBookMapper addressBookMapper, ShoppingCartMapper shoppingCartMapper,
-                            OrderMapper orderMapper, OrderDetailMapper orderDetailMapper, WebSocketServer webSocketServer,
-                            ObjectMapper objectMapper) {
+            OrderMapper orderMapper, OrderDetailMapper orderDetailMapper, WebSocketServer webSocketServer,
+            ObjectMapper objectMapper) {
         this.addressBookMapper = addressBookMapper;
         this.shoppingCartMapper = shoppingCartMapper;
         this.orderMapper = orderMapper;
@@ -56,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderSubmitVO submitOrder(OrderSubmitDTO orderSubmitDTO) {
+    public OrderSubmitVO submit(OrderSubmitDTO orderSubmitDTO) {
         // 处理异常情况
         AddressBook addressBook = addressBookMapper.getById(orderSubmitDTO.getAddressBookId());
         if (addressBook == null) {
@@ -123,7 +123,7 @@ public class OrderServiceImpl implements OrderService {
         // 查询出订单明细，并封装入OrderVO进行响应
         if (page != null && !page.isEmpty()) {
             for (Order order : page) {
-                Long orderId = order.getId();// 订单id
+                Long orderId = order.getId();// 订单 id
 
                 // 查询订单明细
                 List<OrderDetail> orderDetails = orderDetailMapper.getByOrderId(orderId);
@@ -139,14 +139,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderVO details(Long id) {
+    public OrderVO detail(Long id) {
         // 根据 id 查询订单
         Order order = orderMapper.getById(id);
 
         // 查询该订单对应的书本明细
         List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(order.getId());
 
-        // 将该订单及其详情封装到OrderVO并返回
+        // 将该订单及其详情封装到 OrderVO 并返回
         OrderVO orderVO = new OrderVO();
         BeanUtils.copyProperties(order, orderVO);
         orderVO.setOrderDetailList(orderDetailList);
@@ -155,7 +155,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void userCancelById(Long id) {
+    public void cancelById(Long id) {
         // 根据 id 查询订单
         Order orderDB = orderMapper.getById(id);
 
@@ -206,7 +206,44 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void delivery(Long id) {
-        // 根据id查询订单
+        // 根据 id 查询订单
+        Order orderDB = orderMapper.getById(id);
+
+        // 校验订单是否存在，并且状态为 SHIPPED
+        if (orderDB == null || !orderDB.getStatus().equals(OrderStatus.SHIPPED.getCode())) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        Order order = new Order();
+        order.setId(orderDB.getId());
+        // 更新订单状态,状态转为已送达
+        order.setStatus(OrderStatus.DELIVERED.getCode());
+        order.setDeliveryTime(LocalDateTime.now());
+
+        orderMapper.update(order);
+    }
+
+    @Override
+    public void complete(Long id) {
+        // 根据 id 查询订单
+        Order orderDB = orderMapper.getById(id);
+
+        // 校验订单是否存在，并且状态为 DELIVERED
+        if (orderDB == null || !orderDB.getStatus().equals(OrderStatus.DELIVERED.getCode())) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        Order order = new Order();
+        order.setId(orderDB.getId());
+        // 更新订单状态,状态转为完成
+        order.setStatus(OrderStatus.COMPLETED.getCode());
+
+        orderMapper.update(order);
+    }
+
+    @Override
+    public void ship(Long id) {
+        // 根据 id 查询订单
         Order orderDB = orderMapper.getById(id);
 
         // 校验订单是否存在，并且状态为 PAID
@@ -218,25 +255,6 @@ public class OrderServiceImpl implements OrderService {
         order.setId(orderDB.getId());
         // 更新订单状态,状态转为已发货
         order.setStatus(OrderStatus.SHIPPED.getCode());
-
-        orderMapper.update(order);
-    }
-
-    @Override
-    public void complete(Long id) {
-        // 根据id查询订单
-        Order orderDB = orderMapper.getById(id);
-
-        // 校验订单是否存在，并且状态为 SHIPPED
-        if (orderDB == null || !orderDB.getStatus().equals(OrderStatus.SHIPPED.getCode())) {
-            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
-        }
-
-        Order order = new Order();
-        order.setId(orderDB.getId());
-        // 更新订单状态,状态转为完成
-        order.setStatus(OrderStatus.COMPLETED.getCode());
-        order.setDeliveryTime(LocalDateTime.now());
 
         orderMapper.update(order);
     }

@@ -24,7 +24,7 @@ public class UserOrderController {
     @PostMapping("/submit")
     public Result<OrderSubmitVO> submit(@RequestBody OrderSubmitDTO orderSubmitDTO) {
         log.info("用户下单，参数为：{}", orderSubmitDTO);
-        OrderSubmitVO orderSubmitVO = orderService.submitOrder(orderSubmitDTO);
+        OrderSubmitVO orderSubmitVO = orderService.submit(orderSubmitDTO);
         return Result.success(orderSubmitVO);
     }
 
@@ -51,14 +51,14 @@ public class UserOrderController {
     }
 
     /**
-     * 查询订单详情
+     * 订单详情
      *
      * @param id
      * @return
      */
-    @GetMapping("/orderDetail/{id}")
-    public Result<OrderVO> details(@PathVariable Long id) {
-        OrderVO orderVO = orderService.details(id);
+    @GetMapping("/detail/{id}")
+    public Result<OrderVO> detail(@PathVariable Long id) {
+        OrderVO orderVO = orderService.detail(id);
         return Result.success(orderVO);
     }
 
@@ -69,7 +69,7 @@ public class UserOrderController {
      */
     @PutMapping("/cancel/{id}")
     public Result<Object> cancel(@PathVariable Long id) {
-        orderService.userCancelById(id);
+        orderService.cancelById(id);
         return Result.success();
     }
 
@@ -82,6 +82,18 @@ public class UserOrderController {
     @GetMapping("/reminder/{id}")
     public Result<Object> reminder(@PathVariable Long id) {
         orderService.reminder(id);
+        return Result.success();
+    }
+
+    /**
+     * 完成订单
+     * 状态变化：DELIVERED -> COMPLETED
+     *
+     * @return
+     */
+    @PutMapping("/complete/{id}")
+    public Result<Object> complete(@PathVariable Long id) {
+        orderService.complete(id);
         return Result.success();
     }
 }

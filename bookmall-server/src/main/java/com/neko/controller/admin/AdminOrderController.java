@@ -32,31 +32,33 @@ public class AdminOrderController {
      * @param id
      * @return
      */
-    @GetMapping("/details/{id}")
-    public Result<OrderVO> details(@PathVariable Long id) {
-        OrderVO orderVO = orderService.details(id);
+    @GetMapping("/detail/{id}")
+    public Result<OrderVO> detail(@PathVariable Long id) {
+        OrderVO orderVO = orderService.detail(id);
         return Result.success(orderVO);
     }
 
     /**
      * 派送订单
+     * 状态变化：PAID -> SHIPPED
+     *
+     * @return
+     */
+    @PutMapping("/ship/{id}")
+    public Result<Object> ship(@PathVariable Long id) {
+        orderService.ship(id);
+        return Result.success();
+    }
+
+    /**
+     * 送达订单
+     * 状态变化：SHIPPED -> DELIVERED
      *
      * @return
      */
     @PutMapping("/delivery/{id}")
     public Result<Object> delivery(@PathVariable Long id) {
         orderService.delivery(id);
-        return Result.success();
-    }
-
-    /**
-     * 完成订单
-     *
-     * @return
-     */
-    @PutMapping("/complete/{id}")
-    public Result<Object> complete(@PathVariable Long id) {
-        orderService.complete(id);
         return Result.success();
     }
 }

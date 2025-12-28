@@ -8,7 +8,9 @@ import com.neko.vo.OrderSubmitVO;
 import com.neko.vo.OrderVO;
 
 public interface OrderService {
-    OrderSubmitVO submitOrder(OrderSubmitDTO orderSubmitDTO);
+    OrderSubmitVO submit(OrderSubmitDTO orderSubmitDTO);
+
+    void payment(OrderPaymentDTO orderPaymentDTO);
 
     /**
      * 用户端订单分页查询
@@ -26,14 +28,14 @@ public interface OrderService {
      * @param id
      * @return
      */
-    OrderVO details(Long id);
+    OrderVO detail(Long id);
 
     /**
      * 用户取消订单
      *
      * @param id
      */
-    void userCancelById(Long id);
+    void cancelById(Long id);
 
     /**
      * 条件搜索订单
@@ -43,12 +45,7 @@ public interface OrderService {
      */
     PageResult<OrderVO> conditionSearch(OrderPageQueryDTO orderPageQueryDTO);
 
-    /**
-     * 派送订单
-     *
-     * @param id
-     */
-    void delivery(Long id);
+    void reminder(Long id);
 
     /**
      * 完成订单
@@ -57,9 +54,14 @@ public interface OrderService {
      */
     void complete(Long id);
 
-    void reminder(Long id);
+    void ship(Long id);
 
-    void payment(OrderPaymentDTO orderPaymentDTO);
+    /**
+     * 派送订单
+     *
+     * @param id
+     */
+    void delivery(Long id);
 
     void paySuccess(String orderNumber);
 }
