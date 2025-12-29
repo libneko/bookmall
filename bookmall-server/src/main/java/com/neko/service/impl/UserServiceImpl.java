@@ -67,6 +67,10 @@ public class UserServiceImpl implements UserService {
             userMapper.insert(user);
         }
 
+        if (user.getStatus().equals(Status.DISABLE.getCode())) {
+            throw new AccountLockedException(MessageConstant.ACCOUNT_LOCKED);
+        }
+
         user = userMapper.getByEmail(email);
 
         return user;
