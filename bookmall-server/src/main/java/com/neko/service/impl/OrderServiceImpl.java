@@ -45,8 +45,8 @@ public class OrderServiceImpl implements OrderService {
     private final ObjectMapper objectMapper;
 
     public OrderServiceImpl(AddressBookMapper addressBookMapper, ShoppingCartMapper shoppingCartMapper,
-            OrderMapper orderMapper, OrderDetailMapper orderDetailMapper, WebSocketServer webSocketServer,
-            ObjectMapper objectMapper) {
+                            OrderMapper orderMapper, OrderDetailMapper orderDetailMapper, WebSocketServer webSocketServer,
+                            ObjectMapper objectMapper) {
         this.addressBookMapper = addressBookMapper;
         this.shoppingCartMapper = shoppingCartMapper;
         this.orderMapper = orderMapper;
@@ -81,6 +81,7 @@ public class OrderServiceImpl implements OrderService {
         order.setNumber(String.valueOf(System.currentTimeMillis()));
         order.setConsignee(addressBook.getConsignee());
         order.setUserId(userId);
+        order.setPhone(addressBook.getPhone());
 
         orderMapper.insert(order);
 
