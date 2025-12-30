@@ -720,7 +720,9 @@ CREATE TABLE users
     status      INT         NOT NULL DEFAULT 1,                      -- 状态 0:禁用，1:启用
     create_time TIMESTAMP,                                           -- 创建时间
     update_time TIMESTAMP,                                           -- 更新时间
-    CONSTRAINT idx_username UNIQUE (username)                        -- 唯一索引
+    CONSTRAINT idx_username UNIQUE (username),                       -- 用户名唯一
+    CONSTRAINT idx_email UNIQUE (email),                             -- 邮箱唯一
+    CONSTRAINT idx_phone UNIQUE (phone)                              -- 手机号唯一
 );
 
 INSERT INTO users (username, email, password, phone, sex, avatar, status, create_time, update_time)
