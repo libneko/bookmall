@@ -34,7 +34,7 @@ public interface CategoryMapper {
     Page<Category> pageQuery(CategoryPageQueryDTO categoryPageQueryDTO);
 
     /**
-     * 根据id删除分类
+     * 根据 id 删除分类
      *
      * @param id
      */
@@ -42,7 +42,7 @@ public interface CategoryMapper {
     void deleteById(Long id);
 
     /**
-     * 根据id修改分类
+     * 根据 id 修改分类
      *
      * @param category
      */

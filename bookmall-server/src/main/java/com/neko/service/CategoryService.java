@@ -25,7 +25,7 @@ public interface CategoryService {
     PageResult<Category> pageQuery(CategoryPageQueryDTO categoryPageQueryDTO);
 
     /**
-     * 根据id删除分类
+     * 根据 id 删除分类
      *
      * @param id
      */

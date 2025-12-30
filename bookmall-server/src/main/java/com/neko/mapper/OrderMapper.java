@@ -15,7 +15,7 @@ public interface OrderMapper {
     void insert(Order order);
 
     /**
-     * 根据订单号和用户id查询订单
+     * 根据订单号和用户 id 查询订单
      *
      * @param orderNumber
      * @param userId
@@ -45,7 +45,7 @@ public interface OrderMapper {
     Long count(OrderPageQueryDTO orderPageQueryDTO);
 
     /**
-     * 根据id查询订单
+     * 根据 id 查询订单
      *
      * @param id
      */

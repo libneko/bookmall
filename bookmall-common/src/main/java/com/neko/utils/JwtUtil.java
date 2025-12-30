@@ -17,8 +17,8 @@ public class JwtUtil {
      * 生成jwt
      * 使用Hs256算法, 私匙使用固定秘钥
      *
-     * @param secretKey jwt秘钥
-     * @param ttlMillis jwt过期时间(毫秒)
+     * @param secretKey jwt 秘钥
+     * @param ttlMillis jwt 过期时间(毫秒)
      * @param claims    设置的信息
      * @return
      */
@@ -29,7 +29,6 @@ public class JwtUtil {
         long expMillis = System.currentTimeMillis() + ttlMillis;
         Date exp = new Date(expMillis);
 
-        // 设置jwt的body
         JwtBuilder builder = Jwts.builder()
                 .claims(claims)
                 // 设置签名使用的签名算法和签名使用的秘钥
@@ -41,21 +40,18 @@ public class JwtUtil {
     }
 
     /**
-     * Token解密
+     * Token 解密
      *
-     * @param secretKey jwt秘钥 此秘钥一定要保留好在服务端, 不能暴露出去, 否则sign就可以被伪造, 如果对接多个客户端建议改造成多个
-     * @param token     加密后的token
+     * @param secretKey jwt秘钥
+     * @param token     加密后的 token
      * @return
      */
     public static Claims parseJWT(String secretKey, String token) {
         // 确保密钥长度符合HS256要求
         SecretKey signingKey = getValidSigningKey(secretKey);
 
-        // 得到DefaultJwtParser
         return Jwts.parser()
-                // 设置签名的秘钥
                 .verifyWith(signingKey)
-                // 设置需要解析的jwt
                 .build()
                 .parseSignedClaims(token).getPayload();
     }

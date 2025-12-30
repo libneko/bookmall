@@ -100,6 +100,7 @@ public class BookServiceImpl implements BookService {
                             .stock(((Number) source.get("stock")).longValue())
                             .isbn((String) source.get("isbn"))
                             .location((String) source.get("location"))
+                            .publisher((String) source.get("publisher"))
                             .build();
                 }).toList();
 

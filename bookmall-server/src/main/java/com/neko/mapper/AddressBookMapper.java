@@ -29,7 +29,7 @@ public interface AddressBookMapper {
     void insert(AddressBook addressBook);
 
     /**
-     * 根据id查询
+     * 根据 id 查询
      *
      * @param id
      * @return
@@ -38,7 +38,7 @@ public interface AddressBookMapper {
     AddressBook getById(Long id);
 
     /**
-     * 根据id修改
+     * 根据 id 修改
      *
      * @param addressBook
      */
@@ -53,7 +53,7 @@ public interface AddressBookMapper {
     void updateIsDefaultByUserId(AddressBook addressBook);
 
     /**
-     * 根据id删除地址
+     * 根据 id 删除地址
      *
      * @param id
      */

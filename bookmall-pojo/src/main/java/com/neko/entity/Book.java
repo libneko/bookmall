@@ -44,4 +44,6 @@ public class Book implements Serializable {
     private String isbn;
 
     private String location;
+
+    private String publisher;
 }
