@@ -14,4 +14,5 @@ public class MessageConstant {
     public static final String ORDER_STATUS_ERROR = "Order status error";
     public static final String ORDER_NOT_FOUND = "Order not found";
     public static final String USER_IS_ACTIVE = "User is active";
+    public static final String VERIFY_CODE_ERROR = "Verify code error";
 }

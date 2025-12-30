@@ -48,12 +48,9 @@ public class UserController {
     @PostMapping("/login/code")
     public Result<UserLoginVO> login(@RequestBody UserCodeDTO userCodeDTO) {
         log.info("User login by code: {}", userCodeDTO);
-        if (mailService.verifyCode(userCodeDTO.getEmail(), userCodeDTO.getCode())) {
-            User user = userService.login(userCodeDTO);
-            UserLoginVO userLoginVO = getUserVO(user);
-            return Result.success(userLoginVO);
-        }
-        return Result.error("验证码校验错误！");
+        User user = userService.login(userCodeDTO);
+        UserLoginVO userLoginVO = getUserVO(user);
+        return Result.success(userLoginVO);
     }
 
     @PostMapping("/login/password")

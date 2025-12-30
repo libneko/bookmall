@@ -15,6 +15,7 @@ import com.neko.exception.DeletionNotAllowedException;
 import com.neko.exception.PasswordErrorException;
 import com.neko.mapper.UserMapper;
 import com.neko.result.PageResult;
+import com.neko.service.MailService;
 import com.neko.service.UserService;
 import com.neko.utils.CodeUtil;
 import com.neko.utils.PasswordUtil;
@@ -32,13 +33,22 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     private final String avatar = "https://neko-book.oss-cn-hangzhou.aliyuncs.com/default_avatar.jpg";
+    private final MailService mailService;
 
-    public UserServiceImpl(UserMapper userMapper) {
+    public UserServiceImpl(UserMapper userMapper, MailService mailService) {
         this.userMapper = userMapper;
+        this.mailService = mailService;
     }
 
     @Override
     public User register(UserPasswordDTO userPasswordDTO) {
+        String email = userPasswordDTO.getEmail();
+        String code = userPasswordDTO.getCode();
+
+        if (!mailService.verifyCode(email, code)) {
+            throw new AccountLockedException(MessageConstant.VERIFY_CODE_ERROR);
+        }
+
         User user = new User();
         BeanUtils.copyProperties(userPasswordDTO, user);
 
@@ -54,6 +64,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User login(UserCodeDTO userCodeDTO) {
         String email = userCodeDTO.getEmail();
+        String code = userCodeDTO.getCode();
+
+        if (!mailService.verifyCode(email, code)) {
+            throw new AccountLockedException(MessageConstant.VERIFY_CODE_ERROR);
+        }
 
         User user = userMapper.getByEmail(email);
 
