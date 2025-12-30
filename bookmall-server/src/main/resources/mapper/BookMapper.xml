@@ -52,7 +52,7 @@
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="stock != null">stock = #{stock},</if>
             <if test="isbn != null">isbn = #{isbn},</if>
-            <if test="location != null">location = #{location}</if>
+            <if test="location != null">location = #{location},</if>
             <if test="publisher != null">publisher = #{publisher}</if>
         </set>
         where id = #{id}
